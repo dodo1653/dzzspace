@@ -1,14 +1,15 @@
 import React from 'react'
 import { useWorkspaceStore } from '../store/workspaceStore'
 import { IconSidebar } from './icons'
-import { playClick } from '../utils/sound'
+import { playClick, playWindowClose } from '../utils/sound'
 
 interface TitleBarProps {
   onToggleSidebar: () => void
   sidebarVisible: boolean
+  showSidebarToggle?: boolean
 }
 
-const TitleBar: React.FC<TitleBarProps> = ({ onToggleSidebar, sidebarVisible }) => {
+const TitleBar: React.FC<TitleBarProps> = ({ onToggleSidebar, sidebarVisible, showSidebarToggle = true }) => {
   const workspaces = useWorkspaceStore((s) => s.workspaces)
   const activeId = useWorkspaceStore((s) => s.activeWorkspaceId)
   const activeWs = workspaces.find((w) => w.id === activeId)
@@ -24,40 +25,46 @@ const TitleBar: React.FC<TitleBarProps> = ({ onToggleSidebar, sidebarVisible }) 
         {isMac ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <div className="title-bar-traffic-lights">
-              <button className="title-bar-traffic-light close" onClick={handleClose}>
+              <button className="title-bar-traffic-light close" onClick={() => { handleClose(); playWindowClose() }}>
                 <svg width="6" height="6" viewBox="0 0 6 6" fill="none" stroke="rgba(0,0,0,0.35)" strokeWidth="0.8" strokeLinecap="round">
                   <path d="M1.5 1.5l3 3M4.5 1.5l-3 3" />
                 </svg>
               </button>
-              <button className="title-bar-traffic-light minimize" onClick={() => { handleMinimize(); playClick() }}>
+              <button className="title-bar-traffic-light minimize" onClick={handleMinimize}>
                 <svg width="6" height="6" viewBox="0 0 6 6" fill="none" stroke="rgba(0,0,0,0.35)" strokeWidth="0.8" strokeLinecap="round">
                   <path d="M1.5 3h3" />
                 </svg>
               </button>
-              <button className="title-bar-traffic-light maximize" onClick={() => { handleMaximize(); playClick() }}>
+              <button className="title-bar-traffic-light maximize" onClick={handleMaximize}>
                 <svg width="6" height="6" viewBox="0 0 6 6" fill="none" stroke="rgba(0,0,0,0.35)" strokeWidth="0.8" strokeLinecap="round">
                   <rect x="1" y="1" width="4" height="4" rx="0.5" />
                 </svg>
               </button>
             </div>
-            <span className="title-bar-divider" />
-            <button
-              onClick={() => { onToggleSidebar(); playClick() }}
-              className={`title-bar-toggle-btn ${sidebarVisible ? 'active' : ''}`}
-              title="Toggle sidebar"
-            >
-              <IconSidebar size={13} />
-            </button>
+            {showSidebarToggle && (
+              <>
+                <span className="title-bar-divider" />
+                <button
+                  onClick={() => { onToggleSidebar(); playClick() }}
+                  className={`title-bar-toggle-btn ${sidebarVisible ? 'active' : ''}`}
+                  title="Toggle sidebar"
+                >
+                  <IconSidebar size={13} />
+                </button>
+              </>
+            )}
           </div>
         ) : (
           <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-            <button
-              onClick={() => { onToggleSidebar(); playClick() }}
-              className={`title-bar-toggle-btn ${sidebarVisible ? 'active' : ''}`}
-              title="Toggle sidebar"
-            >
-              <IconSidebar size={13} />
-            </button>
+            {showSidebarToggle && (
+              <button
+                onClick={() => { onToggleSidebar(); playClick() }}
+                className={`title-bar-toggle-btn ${sidebarVisible ? 'active' : ''}`}
+                title="Toggle sidebar"
+              >
+                <IconSidebar size={13} />
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -68,17 +75,17 @@ const TitleBar: React.FC<TitleBarProps> = ({ onToggleSidebar, sidebarVisible }) 
 
       {!isMac ? (
         <div className="title-bar-windows-controls">
-          <button onClick={() => { handleMinimize(); playClick() }}>
+          <button onClick={handleMinimize}>
             <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round">
               <path d="M2.5 6h7" />
             </svg>
           </button>
-          <button onClick={() => { handleMaximize(); playClick() }}>
+          <button onClick={handleMaximize}>
             <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round">
               <rect x="2" y="2" width="8" height="8" rx="0.5" />
             </svg>
           </button>
-          <button className="close-btn" onClick={() => { handleClose(); playClick() }}>
+          <button className="close-btn" onClick={() => { handleClose(); playWindowClose() }}>
             <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round">
               <path d="M3 3l6 6M9 3l-6 6" />
             </svg>

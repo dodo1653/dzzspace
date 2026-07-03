@@ -33,21 +33,21 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
 
     const term = new Terminal({
       fontFamily: "'JetBrains Mono', 'Cascadia Code', 'Consolas', 'monospace'",
-      fontSize: 13,
-      lineHeight: 1.3,
-      letterSpacing: 0.2,
+      fontSize: 14,
+      lineHeight: 1.35,
+      letterSpacing: 0.15,
       cursorBlink: true,
       cursorStyle: 'bar',
-      cursorWidth: 1,
+      cursorWidth: 2,
       allowTransparency: false,
       theme: {
-        background: '#0d0d14',
-        foreground: '#dadae2',
-        cursor: '#7c5cfc',
-        cursorAccent: '#0d0d14',
-        selectionBackground: 'rgba(124,92,252,0.2)',
-        selectionInactiveBackground: 'rgba(124,92,252,0.08)',
-        black: '#16161e',
+        background: '#0c0c12',
+        foreground: '#e0e0e8',
+        cursor: '#d4a373',
+        cursorAccent: '#0c0c12',
+        selectionBackground: 'rgba(212,163,115,0.2)',
+        selectionInactiveBackground: 'rgba(212,163,115,0.07)',
+        black: '#18181e',
         red: '#e3567c',
         green: '#4cc2a0',
         yellow: '#d4a373',
@@ -56,13 +56,13 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
         cyan: '#58b9c6',
         white: '#dadae2',
         brightBlack: '#2a2a38',
-        brightRed: '#e3567c',
-        brightGreen: '#4cc2a0',
-        brightYellow: '#d4a373',
-        brightBlue: '#6d8ae8',
-        brightMagenta: '#b483d4',
-        brightCyan: '#58b9c6',
-        brightWhite: '#dadae2'
+        brightRed: '#f06a8e',
+        brightGreen: '#5cd4b0',
+        brightYellow: '#e0b080',
+        brightBlue: '#7d9af0',
+        brightMagenta: '#c494dc',
+        brightCyan: '#6cc8d4',
+        brightWhite: '#ececf4'
       }
     })
 

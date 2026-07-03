@@ -34,8 +34,8 @@ const Sidebar: React.FC = () => {
 
   return (
     <div style={{
-      width: 220,
-      background: 'rgba(10,10,15,0.55)',
+      width: 280,
+      background: 'rgba(8,8,12,0.65)',
       borderRight: '0.5px solid rgba(255,255,255,0.04)',
       display: 'flex',
       flexDirection: 'column',
@@ -43,24 +43,24 @@ const Sidebar: React.FC = () => {
       overflow: 'hidden'
     }}>
       <div style={{
-        padding: '12px 12px',
+        padding: '20px 20px 16px',
         borderBottom: '0.5px solid rgba(255,255,255,0.03)',
         display: 'flex',
         alignItems: 'center',
-        gap: 6
+        gap: 12
       }}>
         <button
           onClick={() => { goBackToLanding(); playClick() }}
           style={{
-            padding: 4,
-            borderRadius: 4,
+            padding: 7,
+            borderRadius: 6,
             color: 'var(--dim)',
-            transition: 'color 0.12s ease, background 0.12s ease',
+            transition: 'all 0.12s ease',
             display: 'flex',
             flexShrink: 0
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.color = 'var(--muted)'
+            e.currentTarget.style.color = 'var(--text)'
             e.currentTarget.style.background = 'rgba(255,255,255,0.03)'
           }}
           onMouseLeave={(e) => {
@@ -69,47 +69,45 @@ const Sidebar: React.FC = () => {
           }}
           title="Back to workspace selection"
         >
-          <IconArrowLeft size={12} />
+          <IconArrowLeft size={15} />
         </button>
         <span style={{
           fontFamily: 'var(--font-mono)',
-          fontSize: 10,
-          fontWeight: 500,
-          letterSpacing: '0.06em',
+          fontSize: 12,
+          fontWeight: 550,
+          letterSpacing: '0.1em',
           textTransform: 'uppercase',
           color: 'var(--dim)',
           flex: 1
         }}>
           workspaces
         </span>
-        <div style={{ display: 'flex', gap: 2 }}>
-          <button
-            onClick={() => { setShowCreate(true); playClick() }}
-            style={{
-              padding: 4,
-              borderRadius: 4,
-              color: 'var(--dim)',
-              transition: 'color 0.12s ease, background 0.12s ease',
-              display: 'flex'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = 'var(--accent)'
-              e.currentTarget.style.background = 'rgba(124,92,252,0.06)'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = 'var(--dim)'
-              e.currentTarget.style.background = 'transparent'
-            }}
-            title="New workspace"
-          >
-            <IconPlus size={12} />
-          </button>
-        </div>
+        <button
+          onClick={() => { setShowCreate(true); playClick() }}
+          style={{
+            padding: 7,
+            borderRadius: 6,
+            color: 'var(--dim)',
+            transition: 'all 0.12s ease',
+            display: 'flex'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = 'var(--accent)'
+            e.currentTarget.style.background = 'var(--accent-glow)'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = 'var(--dim)'
+            e.currentTarget.style.background = 'transparent'
+          }}
+          title="New workspace"
+        >
+          <IconPlus size={15} />
+        </button>
       </div>
 
-      <div style={{ flex: 1, overflow: 'auto', padding: '4px 0' }}>
+      <div style={{ flex: 1, overflow: 'auto', padding: '8px 0' }}>
         {showCreate && (
-          <div style={{ padding: '8px 12px', borderBottom: '0.5px solid rgba(255,255,255,0.02)' }}>
+          <div style={{ padding: '12px 20px', borderBottom: '0.5px solid rgba(255,255,255,0.02)' }}>
             <input
               autoFocus
               value={newName}
@@ -121,48 +119,48 @@ const Sidebar: React.FC = () => {
               placeholder="workspace name"
               style={{
                 width: '100%',
-                padding: '6px 8px',
-                background: 'rgba(10,10,15,0.6)',
-                border: '0.5px solid rgba(255,255,255,0.05)',
-                borderRadius: 5,
+                padding: '9px 12px',
+                background: 'rgba(0,0,0,0.25)',
+                border: '0.5px solid rgba(255,255,255,0.04)',
+                borderRadius: 6,
                 fontFamily: 'var(--font-mono)',
-                fontSize: 10,
+                fontSize: 12,
                 color: 'var(--text)',
                 outline: 'none',
-                marginBottom: 6
+                marginBottom: 10
               }}
-              onFocus={(e) => { e.currentTarget.style.borderColor = 'rgba(245,158,11,0.2)' }}
-              onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.05)' }}
+              onFocus={(e) => { e.currentTarget.style.borderColor = 'var(--accent-dim)' }}
+              onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.04)' }}
             />
             <div
               onClick={handleBrowse}
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: 6,
-                padding: '5px 8px',
-                background: newDir ? 'rgba(10,10,15,0.6)' : 'transparent',
+                gap: 8,
+                padding: '8px 12px',
+                background: newDir ? 'rgba(0,0,0,0.25)' : 'transparent',
                 border: newDir
-                  ? '0.5px solid rgba(255,255,255,0.05)'
-                  : '0.5px dashed rgba(255,255,255,0.05)',
-                borderRadius: 5,
+                  ? '0.5px solid rgba(255,255,255,0.04)'
+                  : '0.5px dashed rgba(255,255,255,0.04)',
+                borderRadius: 6,
                 cursor: 'pointer',
                 transition: 'all 0.12s ease',
-                marginBottom: 8
+                marginBottom: 14
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(245,158,11,0.15)'
+                e.currentTarget.style.borderColor = 'var(--accent-dim)'
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = newDir ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.05)'
+                e.currentTarget.style.borderColor = newDir ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.04)'
               }}
             >
-              <svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke={newDir ? 'var(--accent)' : 'var(--dim)'} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke={newDir ? 'var(--accent)' : 'var(--dim)'} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M1.5 3.5a1 1 0 011-1h3L7 4h4.5a1 1 0 011 1v5.5a1 1 0 01-1 1h-10a1 1 0 01-1-1V3.5z" />
               </svg>
               <span style={{
                 fontFamily: 'var(--font-mono)',
-                fontSize: 9,
+                fontSize: 11,
                 color: newDir ? 'var(--muted)' : 'var(--dim)',
                 flex: 1,
                 overflow: 'hidden',
@@ -172,13 +170,13 @@ const Sidebar: React.FC = () => {
                 {newDir || 'select directory'}
               </span>
             </div>
-            <div style={{ display: 'flex', gap: 4, justifyContent: 'flex-end' }}>
+            <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
               <button
                 onClick={() => { setShowCreate(false); setNewName(''); setNewDir('') }}
                 style={{
-                  padding: '4px 10px',
-                  borderRadius: 4,
-                  fontSize: 9, fontWeight: 450,
+                  padding: '7px 16px',
+                  borderRadius: 5,
+                  fontSize: 11, fontWeight: 450,
                   fontFamily: 'var(--font-mono)',
                   color: 'var(--dim)',
                   transition: 'background 0.12s ease'
@@ -192,9 +190,9 @@ const Sidebar: React.FC = () => {
                 onClick={handleCreate}
                 disabled={!newDir}
                 style={{
-                  padding: '4px 10px',
-                  borderRadius: 4,
-                  fontSize: 9, fontWeight: 500,
+                  padding: '7px 16px',
+                  borderRadius: 5,
+                  fontSize: 11, fontWeight: 500,
                   fontFamily: 'var(--font-mono)',
                   color: newDir ? '#0a0a0f' : 'var(--dim)',
                   background: newDir ? 'var(--accent)' : 'rgba(255,255,255,0.03)',
@@ -213,53 +211,63 @@ const Sidebar: React.FC = () => {
             </div>
           </div>
         )}
-        {workspaces.map((ws) => (
-          <div
-            key={ws.id}
-            onClick={() => handleSelect(ws.id)}
-            style={{
-              padding: '9px 14px',
-              cursor: 'pointer',
-              background: ws.id === activeId ? 'rgba(245,158,11,0.05)' : 'transparent',
-              borderLeft: ws.id === activeId ? '2px solid var(--accent)' : '2px solid transparent',
-              borderBottom: '0.5px solid rgba(255,255,255,0.02)',
-              transition: 'all 0.12s ease'
-            }}
-            onMouseEnter={(e) => {
-              if (ws.id !== activeId) {
-                e.currentTarget.style.background = 'rgba(255,255,255,0.02)'
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (ws.id !== activeId) {
-                e.currentTarget.style.background = 'transparent'
-              }
-            }}
-          >
-            <div style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: 11,
-              fontWeight: 450,
-              color: ws.id === activeId ? 'var(--text)' : 'var(--muted)',
-              letterSpacing: '-0.01em',
-              marginBottom: 2
-            }}>
-              {ws.name}
+        {workspaces.map((ws) => {
+          const isActive = ws.id === activeId
+          return (
+            <div
+              key={ws.id}
+              onClick={() => handleSelect(ws.id)}
+              style={{
+                padding: '20px 22px',
+                cursor: 'pointer',
+                background: isActive
+                  ? 'linear-gradient(to right, rgba(212,163,115,0.05), transparent)'
+                  : 'transparent',
+                borderLeft: isActive ? '3.5px solid var(--accent)' : '3.5px solid transparent',
+                borderBottom: '0.5px solid rgba(255,255,255,0.02)',
+                transition: 'all 0.15s ease'
+              }}
+              onMouseEnter={(e) => {
+                if (!isActive) {
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.015)'
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isActive) {
+                  e.currentTarget.style.background = 'transparent'
+                }
+              }}
+            >
+              <div style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: 15,
+                fontWeight: 480,
+                color: isActive ? 'var(--text)' : 'var(--muted)',
+                letterSpacing: '-0.01em',
+                marginBottom: 6
+              }}>
+                {ws.name}
+              </div>
+              <div style={{
+                fontSize: 11,
+                color: 'var(--dim)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                fontFamily: 'var(--font-mono)'
+              }}>
+                <IconGrid size={11} />
+                <span>{ws.panes.length} {ws.panes.length === 1 ? 'pane' : 'panes'}</span>
+                {ws.cwd && (
+                  <>
+                    <span style={{ opacity: 0.25, margin: '0 3px' }}>/</span>
+                    <span style={{ opacity: 0.45 }}>{ws.cwd.split(/[/\\]/).pop()}</span>
+                  </>
+                )}
+              </div>
             </div>
-            <div style={{
-              fontSize: 9,
-              color: 'var(--dim)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 5,
-              fontFamily: 'var(--font-mono)'
-            }}>
-              <IconGrid size={9} />
-              {ws.panes.length}
-              {ws.cwd && <span style={{ opacity: 0.4 }}>· {ws.cwd.split(/[/\\]/).pop()}</span>}
-            </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </div>
   )

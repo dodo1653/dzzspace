@@ -73,6 +73,37 @@
   50% { transform: translateY(-4px); }
 }
 
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 8px 40px rgba(212, 163, 115, 0.06), 0 2px 12px rgba(0,0,0,0.3);
+  }
+  50% {
+    box-shadow: 0 8px 48px rgba(212, 163, 115, 0.1), 0 2px 16px rgba(0,0,0,0.35);
+  }
+}
+
+@keyframes item-fade-in {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .pane-entrance {
   animation: pane-entrance 200ms ease-out;
 }
@@ -103,6 +134,14 @@
 
 .hero-panel {
   animation: hero-slide-up 700ms ease-out 500ms both;
+}
+
+.hero-panel-inner {
+  animation: card-enter 700ms ease-out 500ms both;
+}
+
+.workspace-item {
+  animation: item-fade-in 400ms ease-out both;
 }
 
 @media (prefers-reduced-motion: reduce) {

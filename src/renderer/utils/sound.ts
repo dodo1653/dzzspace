@@ -10,15 +10,49 @@ function getCtx() {
   return ctx
 }
 
-function playTone(freq: number, endFreq: number, duration: number, volume: number) {
+function noise(duration: number, volume: number, highpass = 2000, lowpass = 8000) {
+  try {
+    const c = getCtx()
+    const sr = c.sampleRate
+    const len = sr * duration
+    const buf = c.createBuffer(1, len, sr)
+    const data = buf.getChannelData(0)
+    for (let i = 0; i < len; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.exp(-3 * i / len)
+    }
+    const src = c.createBufferSource()
+    src.buffer = buf
+
+    const hp = c.createBiquadFilter()
+    hp.type = 'highpass'
+    hp.frequency.value = highpass
+
+    const lp = c.createBiquadFilter()
+    lp.type = 'lowpass'
+    lp.frequency.value = lowpass
+
+    const gain = c.createGain()
+    gain.gain.setValueAtTime(volume, c.currentTime)
+    gain.gain.exponentialRampToValueAtTime(0.001, c.currentTime + duration)
+
+    src.connect(hp)
+    hp.connect(lp)
+    lp.connect(gain)
+    gain.connect(c.destination)
+
+    src.start(c.currentTime)
+    src.stop(c.currentTime + duration)
+  } catch {}
+}
+
+function ring(freq: number, duration: number, volume: number) {
   try {
     const c = getCtx()
     const osc = c.createOscillator()
     const gain = c.createGain()
 
     osc.type = 'sine'
-    osc.frequency.setValueAtTime(freq, c.currentTime)
-    osc.frequency.exponentialRampToValueAtTime(endFreq, c.currentTime + duration)
+    osc.frequency.value = freq
 
     gain.gain.setValueAtTime(volume, c.currentTime)
     gain.gain.exponentialRampToValueAtTime(0.001, c.currentTime + duration)
@@ -28,30 +62,94 @@ function playTone(freq: number, endFreq: number, duration: number, volume: numbe
 
     osc.start(c.currentTime)
     osc.stop(c.currentTime + duration)
-  } catch {
-  }
+  } catch {}
+}
+
+function transientClick(volume: number) {
+  noise(0.004, volume, 3000, 10000)
+  ring(4200, 0.006, volume * 0.5)
+}
+
+function softTic(volume: number) {
+  noise(0.003, volume, 2000, 8000)
+  ring(2800, 0.005, volume * 0.3)
+}
+
+function deepThump(volume: number) {
+  noise(0.006, volume, 500, 4000)
+  ring(600, 0.01, volume * 0.4)
 }
 
 export function playClick() {
-  playTone(900, 500, 0.035, 0.06)
+  transientClick(0.15)
 }
 
 export function playHover() {
-  playTone(1200, 800, 0.02, 0.02)
+  softTic(0.04)
 }
 
 export function playSwitch() {
-  playTone(700, 500, 0.05, 0.05)
+  softTic(0.12)
+  setTimeout(() => softTic(0.08), 35)
 }
 
 export function playCreate() {
-  playTone(600, 900, 0.06, 0.05)
+  deepThump(0.08)
+  setTimeout(() => transientClick(0.1), 40)
 }
 
 export function playDelete() {
-  playTone(500, 200, 0.06, 0.04)
+  transientClick(0.12)
 }
 
 export function playLayoutChange() {
-  playTone(500, 700, 0.04, 0.04)
+  noise(0.005, 0.08, 1000, 6000)
+  ring(1800, 0.008, 0.07)
+  setTimeout(() => {
+    noise(0.004, 0.1, 2000, 8000)
+    ring(3200, 0.006, 0.08)
+  }, 50)
+}
+
+export function playWindowClose() {
+  deepThump(0.06)
+  setTimeout(() => transientClick(0.08), 30)
+}
+
+// --- Darker, more ambient sounds for landing screen ---
+
+function lowThud(volume: number) {
+  noise(0.008, volume, 100, 800)
+  ring(150, 0.015, volume * 0.3)
+}
+
+function softMuffle(volume: number) {
+  noise(0.005, volume, 200, 1500)
+  ring(300, 0.008, volume * 0.2)
+}
+
+export function playLandingClick() {
+  softMuffle(0.06)
+}
+
+export function playLandingHover() {
+  noise(0.002, 0.015, 500, 2000)
+}
+
+export function playLandingSwitch() {
+  lowThud(0.05)
+  setTimeout(() => softMuffle(0.04), 30)
+}
+
+export function playLandingCreate() {
+  lowThud(0.08)
+  setTimeout(() => {
+    noise(0.004, 0.05, 300, 2000)
+    ring(500, 0.01, 0.04)
+  }, 50)
+}
+
+export function playLandingDelete() {
+  lowThud(0.06)
+  noise(0.003, 0.03, 100, 600)
 }

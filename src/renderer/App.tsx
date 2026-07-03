@@ -23,35 +23,34 @@ const App: React.FC = () => {
     }}>
       <BackgroundCanvas />
 
+      <TitleBar onToggleSidebar={() => setSidebarVisible((v) => !v)} sidebarVisible={sidebarVisible} showSidebarToggle={view === 'workspace'} />
+
       {view === 'landing' && <LandingScreen />}
 
       {view === 'workspace' && (
-        <>
-          <TitleBar onToggleSidebar={() => setSidebarVisible((v) => !v)} sidebarVisible={sidebarVisible} />
+        <div style={{
+          position: 'absolute',
+          top: 'var(--title-bar-height)',
+          left: 0,
+          right: 0,
+          bottom: 0,
+          display: 'flex',
+          flexDirection: 'row',
+          overflow: 'hidden'
+        }}>
           <div style={{
-            position: 'absolute',
-            top: 'var(--title-bar-height)',
-            left: 0,
-            right: 0,
-            bottom: 0,
-            display: 'flex',
-            flexDirection: 'row',
-            overflow: 'hidden'
+            width: sidebarVisible ? 280 : 0,
+            overflow: 'hidden',
+            flexShrink: 0,
+            transition: 'width 200ms ease-out, opacity 200ms ease-out',
+            opacity: sidebarVisible ? 1 : 0
           }}>
-            <div style={{
-              width: sidebarVisible ? 220 : 0,
-              overflow: 'hidden',
-              flexShrink: 0,
-              transition: 'width 200ms ease-out, opacity 200ms ease-out',
-              opacity: sidebarVisible ? 1 : 0
-            }}>
-              <div style={{ width: 220 }}>
-                <Sidebar />
-              </div>
+            <div style={{ width: 280 }}>
+              <Sidebar />
             </div>
-            <TerminalGrid />
           </div>
-        </>
+          <TerminalGrid />
+        </div>
       )}
     </div>
   )

@@ -8,7 +8,7 @@
   height: 100%;
   border-radius: var(--radius-pane);
   box-shadow: var(--shadow-pane);
-  transition: box-shadow 0.2s ease;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .pane-container.active {
@@ -20,26 +20,27 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 10px;
+  padding: 0 14px;
   flex-shrink: 0;
-  gap: 4px;
+  gap: 8px;
   border-bottom: 0.5px solid rgba(255, 255, 255, 0.02);
 }
 
 .pane-header-left {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
   min-width: 0;
   flex: 1;
 }
 
 .pane-status-dot {
-  width: 5px;
-  height: 5px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   flex-shrink: 0;
   transition: background 0.3s ease;
+  box-shadow: 0 0 6px rgba(0,0,0,0.3);
 }
 
 .pane-status-dot.running {
@@ -62,19 +63,19 @@
 .pane-header-right {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
   flex-shrink: 0;
 }
 
 .pane-header-btn {
-  width: 22px;
-  height: 22px;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--dim);
   transition: color 0.15s ease, background 0.15s ease;
-  border-radius: 4px;
+  border-radius: 5px;
 }
 
 .pane-header-btn:hover {
@@ -83,15 +84,15 @@
 }
 
 .pane-header-btn svg {
-  width: 13px;
-  height: 13px;
+  width: 15px;
+  height: 15px;
   stroke: currentColor;
   stroke-width: 1.5;
   fill: none;
 }
 
 .pane-header-btn.add-btn:hover {
-  background: rgba(124, 92, 252, 0.08);
+  background: var(--accent-glow);
   color: var(--accent);
 }
 
@@ -102,34 +103,41 @@
 
 .shell-name-input {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 450;
   color: var(--text);
-  background: transparent;
-  border: none;
+  background: rgba(0, 0, 0, 0.25);
+  border: 0.5px solid var(--accent);
+  border-radius: 4px;
   outline: none;
-  padding: 0;
+  padding: 3px 8px;
   width: auto;
-  min-width: 20px;
-  max-width: 160px;
+  min-width: 40px;
+  max-width: 200px;
   letter-spacing: 0;
   cursor: text;
-}
-
-.shell-name-input:focus {
-  border-bottom: 0.5px solid var(--accent);
+  height: 24px;
 }
 
 .shell-name-display {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 450;
   color: var(--text);
-  letter-spacing: 0;
-  cursor: default;
+  letter-spacing: -0.01em;
+  cursor: text;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  padding: 3px 6px;
+  border-radius: 4px;
+  border: 0.5px solid transparent;
+  transition: border-color 0.12s ease, background 0.12s ease;
+}
+
+.shell-name-display:hover {
+  border-color: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .pane-body {
@@ -137,7 +145,18 @@
   position: relative;
   overflow: hidden;
   min-height: 0;
-  padding: 1px;
+  padding: 2px;
+  background: var(--bg);
+}
+
+.pane-body::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  z-index: 1;
+  border-radius: 0;
 }
 
 .pane-body .terminal {
@@ -147,16 +166,16 @@
 
 .pane-body .terminal .xterm {
   height: 100%;
-  padding: 6px 8px;
+  padding: 8px 10px;
 }
 
 .pane-body .terminal .xterm-viewport {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,0.04) transparent;
+  scrollbar-color: rgba(255,255,255,0.05) transparent;
 }
 
 .pane-body .terminal .xterm-viewport::-webkit-scrollbar {
-  width: 4px;
+  width: 5px;
 }
 
 .pane-body .terminal .xterm-viewport::-webkit-scrollbar-track {
@@ -164,12 +183,13 @@
 }
 
 .pane-body .terminal .xterm-viewport::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.05);
-  border-radius: 2px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 3px;
+  border: none;
 }
 
 .pane-body .terminal .xterm-viewport::-webkit-scrollbar-thumb:hover {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.08);
 }
 
 .pane-footer {
@@ -177,7 +197,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 8px;
+  padding: 0 12px;
   background: transparent;
   flex-shrink: 0;
   border-top: 0.5px solid rgba(255, 255, 255, 0.02);
@@ -185,7 +205,7 @@
 
 .pane-footer-left {
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 10px;
   color: var(--dim);
   white-space: nowrap;
   overflow: hidden;
@@ -194,7 +214,7 @@
 
 .pane-footer-right {
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 10px;
   color: var(--dim);
   flex-shrink: 0;
 }
