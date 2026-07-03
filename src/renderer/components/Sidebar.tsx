@@ -1,13 +1,9 @@
 import React, { useState } from 'react'
 import { useWorkspaceStore } from '../store/workspaceStore'
-import { IconArrowLeft, IconGrid, IconPlus, IconSidebar } from './icons'
+import { IconArrowLeft, IconGrid, IconPlus } from './icons'
 import { playClick, playCreate, playSwitch } from '../utils/sound'
 
-interface SidebarProps {
-  onToggle: () => void
-}
-
-const Sidebar: React.FC<SidebarProps> = ({ onToggle }) => {
+const Sidebar: React.FC = () => {
   const workspaces = useWorkspaceStore((s) => s.workspaces)
   const activeId = useWorkspaceStore((s) => s.activeWorkspaceId)
   const selectWorkspace = useWorkspaceStore((s) => s.selectWorkspace)
@@ -98,7 +94,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onToggle }) => {
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.color = 'var(--accent)'
-              e.currentTarget.style.background = 'rgba(245,158,11,0.06)'
+              e.currentTarget.style.background = 'rgba(124,92,252,0.06)'
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.color = 'var(--dim)'
@@ -107,27 +103,6 @@ const Sidebar: React.FC<SidebarProps> = ({ onToggle }) => {
             title="New workspace"
           >
             <IconPlus size={12} />
-          </button>
-          <button
-            onClick={() => { onToggle(); playClick() }}
-            style={{
-              padding: 4,
-              borderRadius: 4,
-              color: 'var(--dim)',
-              transition: 'color 0.12s ease, background 0.12s ease',
-              display: 'flex'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = 'var(--muted)'
-              e.currentTarget.style.background = 'rgba(255,255,255,0.03)'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = 'var(--dim)'
-              e.currentTarget.style.background = 'transparent'
-            }}
-            title="Toggle sidebar"
-          >
-            <IconSidebar size={12} />
           </button>
         </div>
       </div>

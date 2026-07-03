@@ -1,4 +1,4 @@
-export type LayoutPreset = 1 | '2v' | '2h' | 4 | 6 | 9
+export type LayoutPreset = 1 | '2v' | 4 | 6 | 9
 
 export interface PaneConfig {
   id: string

@@ -6,7 +6,6 @@ import { playLayoutChange } from '../utils/sound'
 const presets: { value: LayoutPreset; label: string }[] = [
   { value: 1, label: '1' },
   { value: '2v', label: '2V' },
-  { value: '2h', label: '2H' },
   { value: 4, label: '4' },
   { value: 6, label: '6' },
   { value: 9, label: '9' }

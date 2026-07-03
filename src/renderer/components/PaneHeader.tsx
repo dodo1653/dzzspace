@@ -1,14 +1,13 @@
 import React from 'react'
 import ShellNameTag from './ShellNameTag'
-import { IconFocus, IconSplit, IconClose } from './icons'
+import { IconPlus, IconClose } from './icons'
 import { PaneConfig } from '../types'
 
 interface PaneHeaderProps {
   pane: PaneConfig
   isActive: boolean
   onRename: (name: string) => void
-  onFocus: () => void
-  onSplit: () => void
+  onAddPane: () => void
   onClose: () => void
   onSelect: () => void
 }
@@ -17,8 +16,7 @@ const PaneHeader: React.FC<PaneHeaderProps> = ({
   pane,
   isActive,
   onRename,
-  onFocus,
-  onSplit,
+  onAddPane,
   onClose,
   onSelect
 }) => {
@@ -33,13 +31,10 @@ const PaneHeader: React.FC<PaneHeaderProps> = ({
         <ShellNameTag name={pane.name} onRename={onRename} />
       </div>
       <div className="pane-header-right">
-        <button className="pane-header-btn" onClick={(e) => { e.stopPropagation(); onFocus() }} title="Focus">
-          <IconFocus />
+        <button className="pane-header-btn add-btn" onClick={(e) => { e.stopPropagation(); onAddPane() }} title="Add pane">
+          <IconPlus />
         </button>
-        <button className="pane-header-btn" onClick={(e) => { e.stopPropagation(); onSplit() }} title="Split">
-          <IconSplit />
-        </button>
-        <button className="pane-header-btn close-btn" onClick={(e) => { e.stopPropagation(); onClose() }} title="Close">
+        <button className="pane-header-btn close-btn" onClick={(e) => { e.stopPropagation(); onClose() }} title="Close pane">
           <IconClose />
         </button>
       </div>

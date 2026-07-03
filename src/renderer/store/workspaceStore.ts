@@ -88,7 +88,7 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
     const ws = get().workspaces.find((w) => w.id === wsId)
     if (!ws) return
 
-    const countMap: Record<string, number> = { 1: 1, '2v': 2, '2h': 2, 4: 4, 6: 6, 9: 9 }
+    const countMap: Record<string, number> = { 1: 1, '2v': 2, 4: 4, 6: 6, 9: 9 }
     const targetCount = countMap[String(layout)] || 4
     const currentPanes = [...ws.panes]
     let newPanes: PaneConfig[]

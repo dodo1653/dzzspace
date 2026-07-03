@@ -41,15 +41,15 @@
   50% { opacity: 0.5; }
 }
 
-@keyframes canvas-drift {
-  from { transform: translateY(0); }
-  to { transform: translateY(-100vh); }
+@keyframes hero-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-@keyframes hero-title-in {
+@keyframes hero-slide-up {
   from {
     opacity: 0;
-    transform: translateY(-12px);
+    transform: translateY(18px);
   }
   to {
     opacity: 1;
@@ -57,53 +57,20 @@
   }
 }
 
-@keyframes hero-underscore-blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-
-@keyframes hero-accent-in {
+@keyframes accent-in {
   from {
     width: 0;
     opacity: 0;
   }
   to {
-    width: 60px;
+    width: 48px;
     opacity: 1;
   }
 }
 
-@keyframes hero-subtitle-in {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes hero-panel-in {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes hero-glow-pulse {
-  0%, 100% {
-    opacity: 0.04;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.08;
-    transform: scale(1.05);
-  }
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
 }
 
 .pane-entrance {
@@ -123,33 +90,19 @@
 }
 
 .hero-title {
-  animation: hero-title-in 500ms ease-out both;
-}
-
-.hero-underscore {
-  animation: hero-underscore-blink 1.2s step-end infinite;
+  animation: hero-fade-in 800ms ease-out both;
 }
 
 .hero-accent {
-  animation: hero-accent-in 600ms ease-out 150ms both;
+  animation: accent-in 700ms ease-out 200ms both;
 }
 
 .hero-subtitle {
-  animation: hero-subtitle-in 500ms ease-out 300ms both;
+  animation: hero-fade-in 600ms ease-out 400ms both;
 }
 
 .hero-panel {
-  animation: hero-panel-in 600ms ease-out 450ms both;
-}
-
-.hero-glow {
-  position: absolute;
-  width: 300px;
-  height: 300px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(245,158,11,0.1) 0%, transparent 70%);
-  pointer-events: none;
-  animation: hero-glow-pulse 3s ease-in-out infinite;
+  animation: hero-slide-up 700ms ease-out 500ms both;
 }
 
 @media (prefers-reduced-motion: reduce) {

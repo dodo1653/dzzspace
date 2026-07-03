@@ -18,6 +18,7 @@ const TerminalPane: React.FC<TerminalPaneProps> = ({ pane, isActive, workspaceCw
   const setActivePane = useWorkspaceStore((s) => s.setActivePane)
   const setPaneStatus = useWorkspaceStore((s) => s.setPaneStatus)
   const setTerminalId = useWorkspaceStore((s) => s.setTerminalId)
+  const addPane = useWorkspaceStore((s) => s.addPane)
   const registerTerminal = useTerminalStore((s) => s.registerTerminal)
   const [cwd, setCwd] = useState('~')
 
@@ -35,13 +36,9 @@ const TerminalPane: React.FC<TerminalPaneProps> = ({ pane, isActive, workspaceCw
     closePane(pane.id)
   }, [pane.id, closePane])
 
-  const handleSplit = useCallback(() => {
-    console.log('split', pane.id)
-  }, [pane.id])
-
-  const handleFocus = useCallback(() => {
-    setActivePane(pane.id)
-  }, [pane.id, setActivePane])
+  const handleAddPane = useCallback(() => {
+    addPane()
+  }, [addPane])
 
   return (
     <div className={`pane-container ${isActive ? 'active' : ''} pane-entrance`}>
@@ -49,8 +46,7 @@ const TerminalPane: React.FC<TerminalPaneProps> = ({ pane, isActive, workspaceCw
         pane={pane}
         isActive={isActive}
         onRename={(name) => renamePane(pane.id, name)}
-        onFocus={handleFocus}
-        onSplit={handleSplit}
+        onAddPane={handleAddPane}
         onClose={handleClose}
         onSelect={() => setActivePane(pane.id)}
       />

@@ -10,8 +10,6 @@ function getGridTemplate(preset: LayoutPreset): { cols: string; rows: string } {
       return { cols: '1fr', rows: '1fr' }
     case '2v':
       return { cols: '1fr 1fr', rows: '1fr' }
-    case '2h':
-      return { cols: '1fr', rows: '1fr 1fr' }
     case 4:
       return { cols: '1fr 1fr', rows: '1fr 1fr' }
     case 6:

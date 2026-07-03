@@ -46,7 +46,7 @@ const App: React.FC = () => {
               opacity: sidebarVisible ? 1 : 0
             }}>
               <div style={{ width: 220 }}>
-                <Sidebar onToggle={() => setSidebarVisible((v) => !v)} />
+                <Sidebar />
               </div>
             </div>
             <TerminalGrid />
