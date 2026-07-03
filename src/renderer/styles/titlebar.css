@@ -14,6 +14,13 @@
   -webkit-app-region: drag;
 }
 
+.title-bar-left {
+  display: flex;
+  align-items: center;
+  -webkit-app-region: no-drag;
+  min-width: 0;
+}
+
 .title-bar-title {
   font-family: var(--font-sans);
   font-size: 11px;
@@ -75,6 +82,31 @@
 
 .title-bar-traffic-light.maximize {
   background: #22c55e;
+}
+
+.title-bar-divider {
+  width: 0.5px;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+}
+
+.title-bar-toggle-btn {
+  padding: 5px;
+  border-radius: 5px;
+  display: flex;
+  color: var(--dim);
+  transition: color 0.12s ease, background 0.12s ease;
+  -webkit-app-region: no-drag;
+}
+
+.title-bar-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--muted);
+}
+
+.title-bar-toggle-btn.active {
+  color: var(--muted);
 }
 
 .title-bar-windows-controls {

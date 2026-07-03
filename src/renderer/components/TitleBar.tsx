@@ -20,43 +20,47 @@ const TitleBar: React.FC<TitleBarProps> = ({ onToggleSidebar, sidebarVisible }) 
 
   return (
     <div className="title-bar">
-      {isMac ? (
-        <div className="title-bar-traffic-lights">
-          <button className="title-bar-traffic-light close" onClick={handleClose}>
-            <svg width="6" height="6" viewBox="0 0 6 6" fill="none" stroke="rgba(0,0,0,0.35)" strokeWidth="0.8" strokeLinecap="round">
-              <path d="M1.5 1.5l3 3M4.5 1.5l-3 3" />
-            </svg>
-          </button>
-          <button className="title-bar-traffic-light minimize" onClick={() => { handleMinimize(); playClick() }}>
-            <svg width="6" height="6" viewBox="0 0 6 6" fill="none" stroke="rgba(0,0,0,0.35)" strokeWidth="0.8" strokeLinecap="round">
-              <path d="M1.5 3h3" />
-            </svg>
-          </button>
-          <button className="title-bar-traffic-light maximize" onClick={() => { handleMaximize(); playClick() }}>
-            <svg width="6" height="6" viewBox="0 0 6 6" fill="none" stroke="rgba(0,0,0,0.35)" strokeWidth="0.8" strokeLinecap="round">
-              <rect x="1" y="1" width="4" height="4" rx="0.5" />
-            </svg>
-          </button>
-        </div>
-      ) : (
-        <div style={{ width: '90px', display: 'flex', alignItems: 'center', gap: 4 }}>
-          <button
-            onClick={() => { onToggleSidebar(); playClick() }}
-            style={{
-              padding: 5,
-              borderRadius: 5,
-              color: sidebarVisible ? 'var(--muted)' : 'var(--dim)',
-              display: 'flex',
-              transition: 'color 0.12s ease, background 0.12s ease'
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)' }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
-            title="Toggle sidebar"
-          >
-            <IconSidebar size={13} />
-          </button>
-        </div>
-      )}
+      <div className="title-bar-left">
+        {isMac ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <div className="title-bar-traffic-lights">
+              <button className="title-bar-traffic-light close" onClick={handleClose}>
+                <svg width="6" height="6" viewBox="0 0 6 6" fill="none" stroke="rgba(0,0,0,0.35)" strokeWidth="0.8" strokeLinecap="round">
+                  <path d="M1.5 1.5l3 3M4.5 1.5l-3 3" />
+                </svg>
+              </button>
+              <button className="title-bar-traffic-light minimize" onClick={() => { handleMinimize(); playClick() }}>
+                <svg width="6" height="6" viewBox="0 0 6 6" fill="none" stroke="rgba(0,0,0,0.35)" strokeWidth="0.8" strokeLinecap="round">
+                  <path d="M1.5 3h3" />
+                </svg>
+              </button>
+              <button className="title-bar-traffic-light maximize" onClick={() => { handleMaximize(); playClick() }}>
+                <svg width="6" height="6" viewBox="0 0 6 6" fill="none" stroke="rgba(0,0,0,0.35)" strokeWidth="0.8" strokeLinecap="round">
+                  <rect x="1" y="1" width="4" height="4" rx="0.5" />
+                </svg>
+              </button>
+            </div>
+            <span className="title-bar-divider" />
+            <button
+              onClick={() => { onToggleSidebar(); playClick() }}
+              className={`title-bar-toggle-btn ${sidebarVisible ? 'active' : ''}`}
+              title="Toggle sidebar"
+            >
+              <IconSidebar size={13} />
+            </button>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <button
+              onClick={() => { onToggleSidebar(); playClick() }}
+              className={`title-bar-toggle-btn ${sidebarVisible ? 'active' : ''}`}
+              title="Toggle sidebar"
+            >
+              <IconSidebar size={13} />
+            </button>
+          </div>
+        )}
+      </div>
 
       <div className="title-bar-title">
         {activeWs ? `${activeWs.name}` : 'dzzspace'}

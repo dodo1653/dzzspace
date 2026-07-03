@@ -38,9 +38,17 @@ const App: React.FC = () => {
             flexDirection: 'row',
             overflow: 'hidden'
           }}>
-            {sidebarVisible && (
-              <Sidebar onToggle={() => setSidebarVisible(false)} />
-            )}
+            <div style={{
+              width: sidebarVisible ? 220 : 0,
+              overflow: 'hidden',
+              flexShrink: 0,
+              transition: 'width 200ms ease-out, opacity 200ms ease-out',
+              opacity: sidebarVisible ? 1 : 0
+            }}>
+              <div style={{ width: 220 }}>
+                <Sidebar onToggle={() => setSidebarVisible((v) => !v)} />
+              </div>
+            </div>
             <TerminalGrid />
           </div>
         </>
