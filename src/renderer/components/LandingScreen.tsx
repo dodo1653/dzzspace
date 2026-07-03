@@ -75,25 +75,28 @@ const LandingScreen: React.FC = () => {
         <div style={{ textAlign: 'center' }}>
           <h1 className="hero-title" style={{
             fontFamily: 'var(--font-sans)',
-            fontSize: 48, fontWeight: 180,
-            letterSpacing: '-0.04em',
+            fontSize: 60, fontWeight: 160,
+            letterSpacing: '-0.05em',
             color: '#f0f0f5',
-            marginBottom: 16,
-            lineHeight: 1
+            marginBottom: 22,
+            lineHeight: 1,
+            textRendering: 'geometricPrecision'
           }}>
             dzzspace
           </h1>
           <div className="hero-accent" style={{
-            height: 1.5,
-            background: 'linear-gradient(90deg, transparent, rgba(212,163,115,0.35), transparent)',
-            margin: '0 auto 14px',
-            borderRadius: 2
+            height: 2,
+            width: 80,
+            background: 'linear-gradient(90deg, transparent, rgba(212,163,115,0.4), rgba(212,163,115,0.5), rgba(212,163,115,0.4), transparent)',
+            margin: '0 auto 18px',
+            borderRadius: 4
           }} />
           <p className="hero-subtitle" style={{
             fontFamily: 'var(--font-mono)',
-            fontSize: 9, fontWeight: 400,
-            letterSpacing: '0.18em', textTransform: 'uppercase',
-            color: 'var(--dim)'
+            fontSize: 10, fontWeight: 400,
+            letterSpacing: '0.22em', textTransform: 'uppercase',
+            color: 'var(--dim)',
+            textRendering: 'geometricPrecision'
           }}>
             multi-terminal workspace
           </p>
