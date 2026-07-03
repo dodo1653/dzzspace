@@ -1,0 +1,73 @@
+@keyframes pane-entrance {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pane-exit {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+
+@keyframes terminal-mount {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes landing-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes status-dot-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes canvas-drift {
+  from { transform: translateY(0); }
+  to { transform: translateY(-100vh); }
+}
+
+.pane-entrance {
+  animation: pane-entrance 200ms ease-out;
+}
+
+.pane-exit {
+  animation: pane-exit 150ms ease-in forwards;
+}
+
+.terminal-mount {
+  animation: terminal-mount 400ms ease-out;
+}
+
+.landing-fade-in {
+  animation: landing-fade-in 400ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+    transition-duration: 0s !important;
+  }
+}

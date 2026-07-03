@@ -1,0 +1,93 @@
+.title-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--title-bar-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-3);
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  z-index: 100;
+  -webkit-app-region: drag;
+}
+
+.title-bar-title {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  -webkit-app-region: no-drag;
+}
+
+.title-bar-drag {
+  flex: 1;
+  -webkit-app-region: drag;
+}
+
+.title-bar-traffic-lights {
+  display: flex;
+  gap: 6px;
+  -webkit-app-region: no-drag;
+  padding: 0 4px;
+}
+
+.title-bar-traffic-light {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.15s ease;
+}
+
+.title-bar-traffic-light:hover {
+  opacity: 0.8;
+}
+
+.title-bar-traffic-light.close {
+  background: #ef4444;
+}
+
+.title-bar-traffic-light.minimize {
+  background: #eab308;
+}
+
+.title-bar-traffic-light.maximize {
+  background: #22c55e;
+}
+
+.title-bar-windows-controls {
+  display: flex;
+  -webkit-app-region: no-drag;
+}
+
+.title-bar-windows-controls button {
+  width: 36px;
+  height: var(--title-bar-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.title-bar-windows-controls button:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+}
+
+.title-bar-windows-controls button.close-btn:hover {
+  background: #ef4444;
+  color: #fff;
+}
