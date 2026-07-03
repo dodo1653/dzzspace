@@ -6,6 +6,7 @@ import { WebLinksAddon } from 'xterm-addon-web-links'
 interface TerminalInstanceProps {
   paneId: string
   terminalId: string | null
+  workspaceCwd: string
   onTerminalReady: (id: string) => void
   onTerminalData: (data: string) => void
   onExit: (exitCode: number) => void
@@ -15,6 +16,7 @@ interface TerminalInstanceProps {
 const TerminalInstance: React.FC<TerminalInstanceProps> = ({
   paneId,
   terminalId,
+  workspaceCwd,
   onTerminalReady,
   onTerminalData,
   onExit,
@@ -30,21 +32,22 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
     initializedRef.current = true
 
     const term = new Terminal({
-      fontFamily: "'JetBrains Mono', 'Cascadia Code', 'Fira Code', monospace",
-      fontSize: 13,
-      lineHeight: 1.5,
-      letterSpacing: 0,
+      fontFamily: "'JetBrains Mono', 'Cascadia Code', 'Consolas', 'monospace'",
+      fontSize: 12,
+      lineHeight: 1.25,
+      letterSpacing: 0.3,
       cursorBlink: true,
       cursorStyle: 'bar',
-      cursorWidth: 2,
-      allowTransparency: true,
+      cursorWidth: 1,
+      allowTransparency: false,
       theme: {
-        background: 'transparent',
+        background: '#111118',
         foreground: '#e8e8ed',
         cursor: '#f59e0b',
-        cursorAccent: '#0a0a0f',
-        selectionBackground: 'rgba(245,158,11,0.2)',
-        black: '#1e1e2a',
+        cursorAccent: '#111118',
+        selectionBackground: 'rgba(245,158,11,0.15)',
+        selectionInactiveBackground: 'rgba(245,158,11,0.08)',
+        black: '#1c1c26',
         red: '#ef4444',
         green: '#22c55e',
         yellow: '#eab308',
@@ -72,13 +75,13 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
 
     term.open(containerRef.current)
 
-    // Small delay to ensure DOM is ready for fit
     setTimeout(() => {
       fitAddon.fit()
     }, 50)
 
-    // Create the PTY
-    const id = await window.dzz.pty.create({})
+    const id = await window.dzz.pty.create({
+      cwd: workspaceCwd || undefined
+    })
 
     if (!id) {
       initializedRef.current = false
@@ -93,22 +96,18 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
       onCwdChange(path)
     })
 
-    // Set up data listener
     const cleanup = window.dzz.pty.onData(id, (data) => {
       term.write(data)
     })
 
-    // Set up exit listener
     const exitCleanup = window.dzz.pty.onExit(id, (exitCode) => {
       onExit(exitCode)
     })
 
-    // Handle user input
     term.onData((data) => {
       window.dzz.pty.write(id, data)
     })
 
-    // Resize observer
     const resizeObserver = new ResizeObserver(() => {
       try {
         fitAddon.fit()
@@ -117,7 +116,6 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
           window.dzz.pty.resize(id, dims.cols, dims.rows)
         }
       } catch {
-        // ignore
       }
     })
 
@@ -125,14 +123,13 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
       resizeObserver.observe(containerRef.current)
     }
 
-    // Store cleanup in term ref
     ;(term as any).__cleanup = () => {
       cleanup()
       exitCleanup()
       resizeObserver.disconnect()
       term.dispose()
     }
-  }, [paneId, onTerminalReady, onExit, onCwdChange])
+  }, [paneId, onTerminalReady, onExit, onCwdChange, workspaceCwd])
 
   useEffect(() => {
     if (!terminalId) {
@@ -148,14 +145,12 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
     }
   }, [terminalId, initializeTerminal])
 
-  // Handle resize on window resize
   useEffect(() => {
     const handleResize = () => {
       if (fitAddonRef.current) {
         try {
           fitAddonRef.current.fit()
         } catch {
-          // ignore
         }
       }
     }

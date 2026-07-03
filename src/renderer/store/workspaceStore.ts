@@ -20,7 +20,7 @@ interface WorkspaceState {
   activePaneId: string | null
 
   setView: (view: ViewState) => void
-  createWorkspace: (name: string) => void
+  createWorkspace: (name: string, cwd?: string) => void
   deleteWorkspace: (id: string) => void
   selectWorkspace: (id: string) => void
   setLayout: (layout: LayoutPreset) => void
@@ -41,11 +41,12 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
 
   setView: (view) => set({ view }),
 
-  createWorkspace: (name) => {
+  createWorkspace: (name, cwd = '') => {
     const id = `ws-${Date.now()}`
     const ws: Workspace = {
       id,
       name,
+      cwd,
       panes: createPanes(4),
       layout: 4,
       createdAt: Date.now(),
@@ -73,7 +74,9 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
         activePaneId: ws.panes[0]?.id || null,
         view: 'workspace',
         workspaces: get().workspaces.map((w) =>
-          w.id === id ? { ...w, lastOpened: Date.now() } : w
+          w.id === id
+            ? { ...w, lastOpened: Date.now(), panes: w.panes.map((p) => ({ ...p, terminalId: null, status: 'starting' as const, exitCode: null })) }
+            : w
         )
       })
     }
@@ -90,6 +93,8 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
     const currentPanes = [...ws.panes]
     let newPanes: PaneConfig[]
 
+    const resetPane = (p: PaneConfig) => ({ ...p, terminalId: null, status: 'starting' as const, exitCode: null })
+
     if (targetCount > currentPanes.length) {
       const namesToAdd = DEFAULT_NAMES.slice(currentPanes.length, targetCount)
       const addCount = targetCount - currentPanes.length
@@ -100,9 +105,9 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
         status: 'starting' as const,
         exitCode: null
       }))
-      newPanes = [...currentPanes, ...additional]
+      newPanes = [...currentPanes.map(resetPane), ...additional]
     } else {
-      newPanes = currentPanes.slice(0, targetCount)
+      newPanes = currentPanes.slice(0, targetCount).map(resetPane)
     }
 
     set((s) => ({

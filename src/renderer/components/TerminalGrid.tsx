@@ -52,22 +52,25 @@ const TerminalGrid: React.FC = () => {
 
   return (
     <div style={{ flex: 1, position: 'relative', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
-      <div
-        className="grid-container"
-        style={{
-          gridTemplateColumns: cols,
-          gridTemplateRows: rows,
-          gridAutoFlow: 'row'
-        }}
-      >
-        {panes.map((pane: PaneConfig) => (
-          <div key={pane.id} style={{ minWidth: 0, minHeight: 0, display: 'flex' }}>
-            <TerminalPane
-              pane={pane}
-              isActive={pane.id === activePaneId}
-            />
-          </div>
-        ))}
+      <div className="grid-area">
+        <div
+          className="grid-container"
+          style={{
+            gridTemplateColumns: cols,
+            gridTemplateRows: rows,
+            gridAutoFlow: 'row'
+          }}
+        >
+          {panes.map((pane: PaneConfig) => (
+            <div key={pane.id} style={{ minWidth: 0, minHeight: 0, display: 'flex' }}>
+              <TerminalPane
+                pane={pane}
+                isActive={pane.id === activePaneId}
+                workspaceCwd={ws.cwd || ''}
+              />
+            </div>
+          ))}
+        </div>
       </div>
       <LayoutSwitcher />
     </div>

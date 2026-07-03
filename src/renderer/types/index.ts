@@ -11,6 +11,7 @@ export interface PaneConfig {
 export interface Workspace {
   id: string
   name: string
+  cwd: string
   panes: PaneConfig[]
   layout: LayoutPreset
   createdAt: number

@@ -30,14 +30,14 @@ const BackgroundCanvas: React.FC = () => {
     resize()
     window.addEventListener('resize', resize)
 
-    const particleCount = 10
+    const particleCount = 50
     particlesRef.current = Array.from({ length: particleCount }, () => ({
-      x: Math.random() * (canvas?.width || window.innerWidth),
-      y: Math.random() * (canvas?.height || window.innerHeight),
-      size: 1 + Math.random() * 1.5,
-      speed: 0.1 + Math.random() * 0.2,
-      opacity: 0.15 + Math.random() * 0.25,
-      drift: (Math.random() - 0.5) * 0.2
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      size: 0.8 + Math.random() * 2.2,
+      speed: 0.05 + Math.random() * 0.15,
+      opacity: 0.08 + Math.random() * 0.2,
+      drift: (Math.random() - 0.5) * 0.15
     }))
 
     let visible = true
@@ -52,45 +52,49 @@ const BackgroundCanvas: React.FC = () => {
 
       const w = canvas.width
       const h = canvas.height
-      timeRef.current += 0.005
+      timeRef.current += 0.003
 
       ctx.clearRect(0, 0, w, h)
 
-      // Perspective grid lines
-      ctx.strokeStyle = '#1e1e2a'
-      ctx.lineWidth = 0.5
       const centerX = w / 2
       const centerY = h / 2
-      const spacing = 40
+      const spacing = 48
+      const wave = Math.sin(timeRef.current * 0.5) * 2
 
-      // Vertical grid lines
+      ctx.strokeStyle = 'rgba(30, 30, 42, 0.6)'
+      ctx.lineWidth = 0.5
+
       for (let x = centerX % spacing; x < w; x += spacing) {
         ctx.beginPath()
-        ctx.moveTo(x, 0)
-        ctx.lineTo(x, h)
+        for (let y = 0; y <= h; y += 4) {
+          const dx = Math.sin(y * 0.008 + timeRef.current * 0.3) * wave
+          if (y === 0) ctx.moveTo(x + dx, y)
+          else ctx.lineTo(x + dx, y)
+        }
         ctx.stroke()
       }
 
-      // Horizontal grid lines
       for (let y = centerY % spacing; y < h; y += spacing) {
         ctx.beginPath()
-        ctx.moveTo(0, y)
-        ctx.lineTo(w, y)
+        for (let x = 0; x <= w; x += 4) {
+          const dy = Math.sin(x * 0.008 + timeRef.current * 0.3) * wave
+          if (x === 0) ctx.moveTo(x, y + dy)
+          else ctx.lineTo(x, y + dy)
+        }
         ctx.stroke()
       }
 
-      // Subtle radial gradient overlay for depth
-      const grad = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, Math.max(w, h) * 0.6)
-      grad.addColorStop(0, 'rgba(245, 158, 11, 0.015)')
+      const grad = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, Math.max(w, h) * 0.5)
+      grad.addColorStop(0, 'rgba(245, 158, 11, 0.025)')
+      grad.addColorStop(0.5, 'rgba(245, 158, 11, 0.008)')
       grad.addColorStop(1, 'rgba(10, 10, 15, 0)')
       ctx.fillStyle = grad
       ctx.fillRect(0, 0, w, h)
 
-      // Particles
       const particles = particlesRef.current
       for (const p of particles) {
         p.y -= p.speed
-        p.x += Math.sin(timeRef.current + p.drift * 10) * p.drift
+        p.x += Math.sin(timeRef.current + p.drift * 10) * p.drift * 0.5
 
         if (p.y < -10) {
           p.y = h + 10
@@ -101,16 +105,16 @@ const BackgroundCanvas: React.FC = () => {
 
         ctx.beginPath()
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(107, 107, 123, ${p.opacity})`
+        ctx.fillStyle = `rgba(180, 180, 200, ${p.opacity})`
         ctx.fill()
       }
 
-      // Subtle grid intersection highlights
-      ctx.fillStyle = 'rgba(245, 158, 11, 0.03)'
-      for (let x = centerX % spacing; x < w; x += spacing * 3) {
-        for (let y = centerY % spacing; y < h; y += spacing * 3) {
+      ctx.fillStyle = 'rgba(245, 158, 11, 0.02)'
+      for (let x = centerX % spacing; x < w; x += spacing * 2) {
+        for (let y = centerY % spacing; y < h; y += spacing * 2) {
+          const pulse = 0.5 + Math.sin(x * 0.01 + y * 0.01 + timeRef.current * 2) * 0.5
           ctx.beginPath()
-          ctx.arc(x, y, 1, 0, Math.PI * 2)
+          ctx.arc(x, y, 0.8 + pulse * 0.6, 0, Math.PI * 2)
           ctx.fill()
         }
       }

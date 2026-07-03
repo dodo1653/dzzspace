@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import BackgroundCanvas from './components/BackgroundCanvas'
 import TitleBar from './components/TitleBar'
 import LandingScreen from './components/LandingScreen'
@@ -9,6 +9,7 @@ import { useKeyboard } from './hooks/useKeyboard'
 
 const App: React.FC = () => {
   const view = useWorkspaceStore((s) => s.view)
+  const [sidebarVisible, setSidebarVisible] = useState(true)
 
   useKeyboard()
 
@@ -16,10 +17,9 @@ const App: React.FC = () => {
     <div style={{
       width: '100%',
       height: '100%',
-      display: 'flex',
-      flexDirection: 'column',
       background: 'var(--bg)',
-      position: 'relative'
+      position: 'relative',
+      overflow: 'hidden'
     }}>
       <BackgroundCanvas />
 
@@ -27,14 +27,20 @@ const App: React.FC = () => {
 
       {view === 'workspace' && (
         <>
-          <TitleBar />
+          <TitleBar onToggleSidebar={() => setSidebarVisible((v) => !v)} sidebarVisible={sidebarVisible} />
           <div style={{
-            flex: 1,
+            position: 'absolute',
+            top: 'var(--title-bar-height)',
+            left: 0,
+            right: 0,
+            bottom: 0,
             display: 'flex',
-            marginTop: 'var(--title-bar-height)',
-            minHeight: 0
+            flexDirection: 'row',
+            overflow: 'hidden'
           }}>
-            <Sidebar />
+            {sidebarVisible && (
+              <Sidebar onToggle={() => setSidebarVisible(false)} />
+            )}
             <TerminalGrid />
           </div>
         </>

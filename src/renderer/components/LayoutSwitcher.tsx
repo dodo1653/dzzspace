@@ -1,14 +1,15 @@
 import React, { useState } from 'react'
 import { useWorkspaceStore } from '../store/workspaceStore'
 import { LayoutPreset } from '../types'
+import { playLayoutChange } from '../utils/sound'
 
-const presets: { value: LayoutPreset; label: string; cols: number; rows: number }[] = [
-  { value: 1, label: '1', cols: 1, rows: 1 },
-  { value: '2v', label: '2V', cols: 2, rows: 1 },
-  { value: '2h', label: '2H', cols: 1, rows: 2 },
-  { value: 4, label: '4', cols: 2, rows: 2 },
-  { value: 6, label: '6', cols: 3, rows: 2 },
-  { value: 9, label: '9', cols: 3, rows: 3 }
+const presets: { value: LayoutPreset; label: string }[] = [
+  { value: 1, label: '1' },
+  { value: '2v', label: '2V' },
+  { value: '2h', label: '2H' },
+  { value: 4, label: '4' },
+  { value: 6, label: '6' },
+  { value: 9, label: '9' }
 ]
 
 const LayoutSwitcher: React.FC = () => {
@@ -19,13 +20,21 @@ const LayoutSwitcher: React.FC = () => {
   const setLayout = useWorkspaceStore((s) => s.setLayout)
   const [expanded, setExpanded] = useState(false)
 
+  const handleSetLayout = (v: LayoutPreset) => {
+    setLayout(v)
+    playLayoutChange()
+  }
+
   return (
     <div
       style={{
         position: 'absolute',
-        bottom: 12,
-        right: 12,
-        zIndex: 50
+        bottom: 14,
+        right: 14,
+        zIndex: 50,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 6
       }}
       onMouseEnter={() => setExpanded(true)}
       onMouseLeave={() => setExpanded(false)}
@@ -34,56 +43,62 @@ const LayoutSwitcher: React.FC = () => {
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: 4,
-          padding: expanded ? '6px 10px' : '6px',
-          background: 'rgba(18,18,26,0.85)',
-          backdropFilter: 'blur(8px)',
-          border: '1px solid var(--border)',
+          gap: 2,
+          padding: '4px 4px',
+          background: 'rgba(17,17,24,0.88)',
+          border: '0.5px solid rgba(255,255,255,0.06)',
           borderRadius: 8,
-          transition: 'padding 0.2s ease'
+          backdropFilter: 'blur(6px)',
+          WebkitBackdropFilter: 'blur(6px)'
         }}
       >
+        {expanded && (
+          <span style={{
+            fontFamily: 'var(--font-sans)',
+            fontSize: 9,
+            fontWeight: 600,
+            letterSpacing: '0.06em',
+            textTransform: 'uppercase',
+            color: 'var(--dim)',
+            padding: '0 6px 0 4px',
+            whiteSpace: 'nowrap'
+          }}>
+            Layout
+          </span>
+        )}
         {presets.map((p) => (
           <button
             key={String(p.value)}
-            onClick={() => setLayout(p.value)}
-            title={p.label}
+            onClick={() => handleSetLayout(p.value)}
+            title={`${p.label} panes`}
             style={{
-              width: expanded ? 22 : 18,
-              height: expanded ? 22 : 18,
-              display: 'grid',
-              gridTemplateColumns: `repeat(${p.cols}, 1fr)`,
-              gridTemplateRows: `repeat(${p.rows}, 1fr)`,
-              gap: 2,
-              padding: 3,
-              borderRadius: 4,
-              background: layout === p.value ? 'rgba(245,158,11,0.12)' : 'transparent',
-              border: layout === p.value ? '1px solid rgba(245,158,11,0.25)' : '1px solid transparent',
+              padding: expanded ? '5px 10px' : '4px 7px',
+              borderRadius: 6,
+              fontSize: expanded ? 11 : 10,
+              fontWeight: layout === p.value ? 600 : 400,
+              fontFamily: 'var(--font-mono)',
+              color: layout === p.value ? 'var(--accent)' : 'var(--muted)',
+              background: layout === p.value ? 'rgba(245,158,11,0.1)' : 'transparent',
+              border: 'none',
               cursor: 'pointer',
-              transition: 'all 0.15s ease'
+              transition: 'all 0.15s ease',
+              letterSpacing: '0.02em',
+              lineHeight: 1
             }}
             onMouseEnter={(e) => {
               if (layout !== p.value) {
+                e.currentTarget.style.color = 'var(--text)'
                 e.currentTarget.style.background = 'rgba(255,255,255,0.04)'
               }
             }}
             onMouseLeave={(e) => {
               if (layout !== p.value) {
+                e.currentTarget.style.color = 'var(--muted)'
                 e.currentTarget.style.background = 'transparent'
               }
             }}
           >
-            {Array.from({ length: p.cols * p.rows }).map((_, i) => (
-              <div
-                key={i}
-                style={{
-                  background: layout === p.value ? 'var(--accent)' : 'var(--dim)',
-                  borderRadius: 1,
-                  opacity: layout === p.value ? 0.8 : 0.4,
-                  transition: 'all 0.15s ease'
-                }}
-              />
-            ))}
+            {p.label}
           </button>
         ))}
       </div>

@@ -10,6 +10,9 @@ declare global {
         close: () => void
         isMaximized: () => Promise<boolean>
       }
+      dialog: {
+        selectDirectory: () => Promise<string | null>
+      }
       pty: {
         create: (options: { cwd?: string }) => Promise<string>
         write: (id: string, data: string) => Promise<void>

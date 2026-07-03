@@ -9,9 +9,10 @@ import { PaneConfig } from '../types'
 interface TerminalPaneProps {
   pane: PaneConfig
   isActive: boolean
+  workspaceCwd: string
 }
 
-const TerminalPane: React.FC<TerminalPaneProps> = ({ pane, isActive }) => {
+const TerminalPane: React.FC<TerminalPaneProps> = ({ pane, isActive, workspaceCwd }) => {
   const renamePane = useWorkspaceStore((s) => s.renamePane)
   const closePane = useWorkspaceStore((s) => s.closePane)
   const setActivePane = useWorkspaceStore((s) => s.setActivePane)
@@ -35,7 +36,6 @@ const TerminalPane: React.FC<TerminalPaneProps> = ({ pane, isActive }) => {
   }, [pane.id, closePane])
 
   const handleSplit = useCallback(() => {
-    // For now, split just logs. Future: create adjacent pane
     console.log('split', pane.id)
   }, [pane.id])
 
@@ -58,6 +58,7 @@ const TerminalPane: React.FC<TerminalPaneProps> = ({ pane, isActive }) => {
         <TerminalInstance
           paneId={pane.id}
           terminalId={pane.terminalId}
+          workspaceCwd={workspaceCwd}
           onTerminalReady={handleTerminalReady}
           onTerminalData={() => {}}
           onExit={handleExit}

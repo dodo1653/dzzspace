@@ -7,11 +7,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 var(--space-3);
-  background: var(--glass);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
+  padding: 0 12px;
+  background: rgba(10, 10, 15, 0.92);
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.04);
   z-index: 100;
   -webkit-app-region: drag;
 }
@@ -26,6 +24,7 @@
   left: 50%;
   transform: translateX(-50%);
   -webkit-app-region: no-drag;
+  white-space: nowrap;
 }
 
 .title-bar-drag {
@@ -35,24 +34,35 @@
 
 .title-bar-traffic-lights {
   display: flex;
-  gap: 6px;
+  gap: 7px;
   -webkit-app-region: no-drag;
   padding: 0 4px;
+  align-items: center;
 }
 
 .title-bar-traffic-light {
-  width: 11px;
-  height: 11px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: opacity 0.15s ease;
+  transition: filter 0.15s ease, opacity 0.15s ease;
+  position: relative;
+}
+
+.title-bar-traffic-light svg {
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+
+.title-bar-traffic-light:hover svg {
+  opacity: 1;
 }
 
 .title-bar-traffic-light:hover {
-  opacity: 0.8;
+  filter: brightness(1.1);
 }
 
 .title-bar-traffic-light.close {
@@ -70,24 +80,31 @@
 .title-bar-windows-controls {
   display: flex;
   -webkit-app-region: no-drag;
+  gap: 2px;
 }
 
 .title-bar-windows-controls button {
-  width: 36px;
+  width: 38px;
   height: var(--title-bar-height);
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--muted);
-  transition: background 0.15s ease, color 0.15s ease;
+  transition: background 0.12s ease, color 0.12s ease;
+  border-radius: 0;
+}
+
+.title-bar-windows-controls button svg {
+  width: 11px;
+  height: 11px;
 }
 
 .title-bar-windows-controls button:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.05);
   color: var(--text);
 }
 
 .title-bar-windows-controls button.close-btn:hover {
-  background: #ef4444;
-  color: #fff;
+  background: rgba(239, 68, 68, 0.18);
+  color: var(--error);
 }

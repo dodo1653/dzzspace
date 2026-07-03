@@ -10,6 +10,10 @@ contextBridge.exposeInMainWorld('dzz', {
     isMaximized: () => ipcRenderer.invoke('window:isMaximized')
   },
 
+  dialog: {
+    selectDirectory: () => ipcRenderer.invoke('dialog:selectDirectory')
+  },
+
   pty: {
     create: (options: { cwd?: string }) => ipcRenderer.invoke('pty:create', options),
     write: (id: string, data: string) => ipcRenderer.invoke('pty:write', id, data),
