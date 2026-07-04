@@ -8,6 +8,7 @@
     "build": "tsc -b && electron-vite build",
     "preview": "electron-vite preview",
     "make": "electron-vite build && electron-forge make",
+    "dist": "electron-vite build && electron-builder --win --config.win.target=nsis",
     "lint": "eslint src/",
     "typecheck": "tsc --noEmit"
   },
@@ -33,6 +34,7 @@
     "@typescript-eslint/parser": "^7.0.0",
     "autoprefixer": "^10.4.0",
     "electron": "^31.0.0",
+    "electron-builder": "^26.15.3",
     "electron-vite": "^2.3.0",
     "eslint": "^8.57.0",
     "postcss": "^8.4.0",

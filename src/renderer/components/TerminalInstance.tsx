@@ -239,8 +239,13 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
 
   useEffect(() => {
     const handleResize = () => {
-      if (fitAddonRef.current) {
+      PremiumRenderer.resetSharedSize()
+      if (fitAddonRef.current && termRef.current && rendererRef.current) {
         try {
+          const dpr = window.devicePixelRatio || 1
+          const profile = rendererRef.current.calculateOptimalSize(containerRef.current?.clientHeight || 400, dpr)
+          termRef.current.options.fontSize = profile.fontSize
+          termRef.current.options.lineHeight = profile.lineHeight
           fitAddonRef.current.fit()
         } catch {
         }

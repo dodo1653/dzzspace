@@ -16,19 +16,15 @@ jobs:
         with:
           node-version: 20
       - run: npm ci
-        env:
-          npm_config_user_agent: npm/11.0.0
-      - run: npm run make
-        env:
-          npm_config_user_agent: npm/11.0.0
+      - run: npx --yes electron-builder --win --config.win.target=nsis
       - name: Upload .exe
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./out/make/squirrel.windows/x64/dzzspace-Setup.exe
-          asset_name: dzzspace-Setup.exe
+          asset_path: ./dist_electron/dzzspace Setup 1.0.0.exe
+          asset_name: dzzspace-Setup-1.0.0.exe
           asset_content_type: application/octet-stream
 
   build-macos:
@@ -39,14 +35,14 @@ jobs:
         with:
           node-version: 20
       - run: npm ci
-      - run: npm run make
+      - run: npx electron-builder --mac --config.mac.target=zip
       - name: Upload .zip
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./out/make/zip/darwin/x64/dzzspace-darwin-x64.zip
+          asset_path: ./dist_electron/dzzspace-1.0.0-mac.zip
           asset_name: dzzspace-darwin-x64.zip
           asset_content_type: application/zip
 
@@ -58,13 +54,13 @@ jobs:
         with:
           node-version: 20
       - run: npm ci
-      - run: npm run make
-      - name: Upload .zip
+      - run: npx electron-builder --linux --config.linux.target=AppImage
+      - name: Upload .AppImage
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./out/make/zip/linux/x64/dzzspace-linux-x64.zip
-          asset_name: dzzspace-linux-x64.zip
-          asset_content_type: application/zip
+          asset_path: ./dist_electron/dzzspace-1.0.0.AppImage
+          asset_name: dzzspace-linux-x64.AppImage
+          asset_content_type: application/octet-stream

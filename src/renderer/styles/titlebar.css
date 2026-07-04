@@ -7,7 +7,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 12px;
+  padding: 0 8px 0 12px;
   background: rgba(8, 8, 12, 0.94);
   border-bottom: 0.5px solid rgba(255, 255, 255, 0.04);
   z-index: 100;
@@ -17,39 +17,60 @@
 .title-bar-left {
   display: flex;
   align-items: center;
+  gap: 6px;
   -webkit-app-region: no-drag;
   min-width: 0;
 }
 
-.title-bar-title {
-  font-family: var(--font-sans);
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--muted);
-  letter-spacing: 0.04em;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  -webkit-app-region: no-drag;
-  white-space: nowrap;
-}
-
-.title-bar-drag {
+.title-bar-center {
   flex: 1;
   -webkit-app-region: drag;
+}
+
+.title-bar-right {
+  display: flex;
+  align-items: center;
+  -webkit-app-region: no-drag;
+}
+
+.title-bar-app-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  background: rgba(212, 163, 115, 0.06);
+  border: 0.5px solid rgba(212, 163, 115, 0.15);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.title-bar-app-icon::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border: 1px solid rgba(212, 163, 115, 0.3);
+}
+
+.title-bar-app-icon::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  right: 5px;
+  top: 50%;
+  height: 0.5px;
+  background: rgba(212, 163, 115, 0.2);
 }
 
 .title-bar-traffic-lights {
   display: flex;
   gap: 7px;
   -webkit-app-region: no-drag;
-  padding: 0 4px;
+  padding: 0 2px;
   align-items: center;
 }
 
 .title-bar-traffic-light {
-  width: 12px;
-  height: 12px;
+  width: 13px;
+  height: 13px;
   border-radius: 50%;
   border: none;
   display: flex;
@@ -60,7 +81,7 @@
 }
 
 .title-bar-traffic-light:active {
-  transform: scale(0.9);
+  transform: scale(0.88);
 }
 
 .title-bar-traffic-light svg {
@@ -90,13 +111,14 @@
 
 .title-bar-divider {
   width: 0.5px;
-  height: 14px;
+  height: 16px;
   background: rgba(255, 255, 255, 0.06);
   flex-shrink: 0;
+  margin: 0 2px;
 }
 
 .title-bar-toggle-btn {
-  padding: 5px;
+  padding: 6px;
   border-radius: 5px;
   display: flex;
   color: var(--dim);
@@ -105,7 +127,7 @@
 }
 
 .title-bar-toggle-btn:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.05);
   color: var(--muted);
 }
 
@@ -116,11 +138,11 @@
 .title-bar-windows-controls {
   display: flex;
   -webkit-app-region: no-drag;
-  gap: 2px;
+  margin-right: -8px;
 }
 
 .title-bar-windows-controls button {
-  width: 42px;
+  width: 46px;
   height: var(--title-bar-height);
   display: flex;
   align-items: center;
@@ -132,9 +154,9 @@
 }
 
 .title-bar-windows-controls button svg {
-  width: 12px;
-  height: 12px;
-  stroke-width: 1.3;
+  width: 13px;
+  height: 13px;
+  stroke-width: 1.4;
 }
 
 .title-bar-windows-controls button:hover {
@@ -146,11 +168,11 @@
   background: rgba(255, 255, 255, 0.04);
 }
 
-.title-bar-windows-controls button.close-btn:hover {
-  background: rgba(227, 86, 124, 0.15);
+.title-bar-windows-controls button.title-bar-close-btn:hover {
+  background: rgba(227, 86, 124, 0.12);
   color: var(--error);
 }
 
-.title-bar-windows-controls button.close-btn:active {
-  background: rgba(227, 86, 124, 0.2);
+.title-bar-windows-controls button.title-bar-close-btn:active {
+  background: rgba(227, 86, 124, 0.18);
 }

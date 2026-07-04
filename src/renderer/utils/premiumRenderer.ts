@@ -30,6 +30,9 @@ const TIERS: Tier[] = [
   { min: 900, max: Infinity, fontSize: 16, lineHeight: 1.12, name: 'generous' },
 ]
 
+let sharedFontSize: number | null = null
+let sharedLineHeight: number | null = null
+
 export class PremiumRenderer {
   private measureCanvas: HTMLCanvasElement
   private measureCtx: CanvasRenderingContext2D | null = null
@@ -43,6 +46,11 @@ export class PremiumRenderer {
     this.measureCanvas.height = 128
     this.measureCtx = this.measureCanvas.getContext('2d')
     this.prewarmFont()
+  }
+
+  static resetSharedSize(): void {
+    sharedFontSize = null
+    sharedLineHeight = null
   }
 
   private prewarmFont(): void {
@@ -91,6 +99,17 @@ export class PremiumRenderer {
   }
 
   calculateOptimalSize(containerHeight: number, dpr: number): SizeProfile {
+    if (sharedFontSize !== null && sharedLineHeight !== null) {
+      return {
+        fontSize: sharedFontSize,
+        lineHeight: sharedLineHeight,
+        letterSpacing: 0,
+        fontWeight: 400,
+        fontWeightBold: 600,
+        tier: 'shared'
+      }
+    }
+
     const effectiveHeight = containerHeight * dpr
     let selected = TIERS[2]
     for (const tier of TIERS) {
@@ -113,6 +132,9 @@ export class PremiumRenderer {
     fontSize = Math.max(TIERS[0].fontSize, Math.min(TIERS[TIERS.length - 1].fontSize, fontSize))
 
     const lineHeight = this.computeLineHeight(containerHeight, fontSize)
+
+    sharedFontSize = fontSize
+    sharedLineHeight = lineHeight
 
     return {
       fontSize,

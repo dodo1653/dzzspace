@@ -10,7 +10,7 @@ export function registerPtyHandlers() {
   ipcMain.handle('pty:create', (_event, options: { cwd?: string }) => {
     const id = `term-${nextId++}`
     const shell = 'powershell.exe'
-    const shellArgs = ['-NoProfile', '-NoLogo', '-NoExit', '-Command', "function prompt {\"[$((Get-Location).Path.Replace($HOME,'~').Replace('\\','/'))] ❯ \"}"]
+    const shellArgs = ['-NoProfile', '-NoLogo', '-NoExit', '-Command', "function prompt {\"$((Get-Location).Path.Replace($HOME,'~').Replace('\\','/')) ❯ \"}"]
 
     const cwd = options.cwd || process.env.USERPROFILE || 'C:\\'
     sessionCwds.set(id, cwd)
