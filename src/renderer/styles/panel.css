@@ -34,30 +34,19 @@
   flex: 1;
 }
 
-.pane-status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+.pane-number {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 650;
   flex-shrink: 0;
-  transition: background 0.3s ease;
-  box-shadow: 0 0 6px rgba(0,0,0,0.3);
-}
-
-.pane-status-dot.running {
-  background: var(--success);
-}
-
-.pane-status-dot.exited {
-  background: var(--dim);
-}
-
-.pane-status-dot.error {
-  background: var(--error);
-}
-
-.pane-status-dot.starting {
-  background: var(--warning);
-  animation: status-dot-pulse 1s ease-in-out infinite;
+  line-height: 1;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 1px 2px rgba(0,0,0,0.2);
 }
 
 .pane-header-right {

@@ -3,6 +3,7 @@ export type LayoutPreset = 1 | '2v' | 4 | 6 | 9
 export interface PaneConfig {
   id: string
   name: string
+  color: string
   terminalId: string | null
   status: 'starting' | 'running' | 'exited' | 'error'
   exitCode: number | null

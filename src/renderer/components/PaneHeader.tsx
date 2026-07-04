@@ -5,6 +5,7 @@ import { PaneConfig } from '../types'
 
 interface PaneHeaderProps {
   pane: PaneConfig
+  paneIndex: number
   isActive: boolean
   onRename: (name: string) => void
   onAddPane: () => void
@@ -14,6 +15,7 @@ interface PaneHeaderProps {
 
 const PaneHeader: React.FC<PaneHeaderProps> = ({
   pane,
+  paneIndex,
   isActive,
   onRename,
   onAddPane,
@@ -27,7 +29,15 @@ const PaneHeader: React.FC<PaneHeaderProps> = ({
       style={{ cursor: 'pointer' }}
     >
       <div className="pane-header-left">
-        <div className={`pane-status-dot ${pane.status}`} />
+        <span
+          className="pane-number"
+          style={{
+            background: pane.color,
+            color: '#0a0a0f'
+          }}
+        >
+          {paneIndex}
+        </span>
         <ShellNameTag name={pane.name} onRename={onRename} />
       </div>
       <div className="pane-header-right">

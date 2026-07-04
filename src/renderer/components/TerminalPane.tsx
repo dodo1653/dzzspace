@@ -8,11 +8,12 @@ import { PaneConfig } from '../types'
 
 interface TerminalPaneProps {
   pane: PaneConfig
+  paneIndex: number
   isActive: boolean
   workspaceCwd: string
 }
 
-const TerminalPane: React.FC<TerminalPaneProps> = ({ pane, isActive, workspaceCwd }) => {
+const TerminalPane: React.FC<TerminalPaneProps> = ({ pane, paneIndex, isActive, workspaceCwd }) => {
   const renamePane = useWorkspaceStore((s) => s.renamePane)
   const closePane = useWorkspaceStore((s) => s.closePane)
   const setActivePane = useWorkspaceStore((s) => s.setActivePane)
@@ -44,6 +45,7 @@ const TerminalPane: React.FC<TerminalPaneProps> = ({ pane, isActive, workspaceCw
     <div className={`pane-container ${isActive ? 'active' : ''} pane-entrance`}>
       <PaneHeader
         pane={pane}
+        paneIndex={paneIndex}
         isActive={isActive}
         onRename={(name) => renamePane(pane.id, name)}
         onAddPane={handleAddPane}

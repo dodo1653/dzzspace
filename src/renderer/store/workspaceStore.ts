@@ -1,12 +1,42 @@
 import { create } from 'zustand'
 import { Workspace, PaneConfig, LayoutPreset, ViewState } from '../types'
 
-const DEFAULT_NAMES = ['dev', 'build', 'server', 'db', 'tools', 'logs', 'test', 'deploy', 'monitor']
+const NICKNAMES = [
+  'Gizmo', 'Pickle', 'Mochi', 'Ziggy', 'Pepper', 'Waffle', 'Tofu', 'Boba',
+  'Noodle', 'Waddles', 'Sushi', 'Panda', 'Mango', 'Pixel', 'Sparky',
+  'Fizz', 'Kiwi', 'Taco', 'Maple', 'Yuzu', 'Nacho', 'Miso', 'Dango',
+  'Kimchi', 'Wasabi', 'Soba', 'Udon', 'Okra', 'Sesame', 'Chili',
+  'Curry', 'Basil', 'Mint', 'Olive', 'Peanut', 'Cashew', 'Walnut',
+  'Biscuit', 'Nugget', 'Pudding', 'Sprout', 'Clover', 'Hazel', 'Juniper',
+  'Rascal', 'Pippin', 'Wrigley', 'Zorro', 'Mimosa', 'Ramen', 'Gumbo',
+  'Truffle', 'Fennel', 'Radish', 'Turnip', 'Burdock', 'Gnocchi'
+]
+
+const COLORS = [
+  '#e8885c', '#5cb89a', '#d4a373', '#7c8cd4', '#c47cb4',
+  '#5cb4c4', '#c47c6a', '#8ac48a', '#c4a4c4'
+]
+
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
+}
+
+function pickRandom<T>(arr: T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)]
+}
 
 function createPanes(count: number): PaneConfig[] {
+  const shuffledNames = shuffle(NICKNAMES)
+  const shuffledColors = shuffle(COLORS)
   return Array.from({ length: count }, (_, i) => ({
     id: `pane-${Date.now()}-${i}`,
-    name: DEFAULT_NAMES[i] || `shell-${i + 1}`,
+    name: shuffledNames[i % shuffledNames.length],
+    color: shuffledColors[i % shuffledColors.length],
     terminalId: null,
     status: 'starting' as const,
     exitCode: null
@@ -96,11 +126,11 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
     const resetPane = (p: PaneConfig) => ({ ...p, terminalId: null, status: 'starting' as const, exitCode: null })
 
     if (targetCount > currentPanes.length) {
-      const namesToAdd = DEFAULT_NAMES.slice(currentPanes.length, targetCount)
       const addCount = targetCount - currentPanes.length
       const additional = Array.from({ length: addCount }, (_, i) => ({
         id: `pane-${Date.now()}-${i}`,
-        name: namesToAdd[i] || `shell-${currentPanes.length + i + 1}`,
+        name: pickRandom(NICKNAMES),
+        color: pickRandom(COLORS),
         terminalId: null,
         status: 'starting' as const,
         exitCode: null
@@ -168,10 +198,10 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
     const ws = get().workspaces.find((w) => w.id === wsId)
     if (!ws || ws.panes.length >= 9) return
 
-    const idx = ws.panes.length
     const newPane: PaneConfig = {
       id: `pane-${Date.now()}`,
-      name: DEFAULT_NAMES[idx] || `shell-${idx + 1}`,
+      name: pickRandom(NICKNAMES),
+      color: pickRandom(COLORS),
       terminalId: null,
       status: 'starting',
       exitCode: null

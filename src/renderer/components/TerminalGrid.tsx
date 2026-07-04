@@ -59,10 +59,11 @@ const TerminalGrid: React.FC = () => {
             gridAutoFlow: 'row'
           }}
         >
-          {panes.map((pane: PaneConfig) => (
+          {panes.map((pane: PaneConfig, idx: number) => (
             <div key={pane.id} style={{ minWidth: 0, minHeight: 0, display: 'flex' }}>
               <TerminalPane
                 pane={pane}
+                paneIndex={idx + 1}
                 isActive={pane.id === activePaneId}
                 workspaceCwd={ws.cwd || ''}
               />
