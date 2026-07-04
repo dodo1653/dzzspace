@@ -4,6 +4,7 @@ import { FitAddon } from 'xterm-addon-fit'
 import { WebLinksAddon } from 'xterm-addon-web-links'
 import { PremiumRenderer } from '../utils/premiumRenderer'
 import { detectCliProfile, PROFILES } from '../utils/cliProfiles'
+import { useWorkspaceStore } from '../store/workspaceStore'
 
 interface TerminalInstanceProps {
   paneId: string
@@ -196,7 +197,11 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
 
     const resizeObserver = new ResizeObserver(() => {
       if (resizeTimer !== null) clearTimeout(resizeTimer)
-      resizeTimer = setTimeout(debouncedFit, 80)
+      resizeTimer = setTimeout(() => {
+        const rect = containerRef.current?.getBoundingClientRect()
+        if (!rect || rect.width === 0 || rect.height === 0) return
+        debouncedFit()
+      }, 80)
     })
 
     if (containerRef.current) {
@@ -236,6 +241,26 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
       initializedRef.current = false
     }
   }, [initializeTerminal])
+
+  const wsSwitchCount = useWorkspaceStore((s) => s.workspaceSwitchCount)
+
+  useEffect(() => {
+    if (!termRef.current || !fitAddonRef.current) return
+    const term = termRef.current
+    const fitAddon = fitAddonRef.current
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        try {
+          fitAddon.fit()
+          const dims = fitAddon.proposeDimensions()
+          if (dims && dims.cols > 0 && dims.rows > 0) {
+            window.dzz.pty.resize(ptyIdRef.current!, dims.cols, dims.rows)
+            term.refresh(0, term.rows - 1)
+          }
+        } catch {}
+      })
+    })
+  }, [wsSwitchCount])
 
   useEffect(() => {
     const handleResize = () => {

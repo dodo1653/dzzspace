@@ -48,6 +48,7 @@ interface WorkspaceState {
   workspaces: Workspace[]
   activeWorkspaceId: string | null
   activePaneId: string | null
+  workspaceSwitchCount: number
 
   setView: (view: ViewState) => void
   createWorkspace: (name: string, cwd?: string) => void
@@ -69,6 +70,7 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
   workspaces: [],
   activeWorkspaceId: null,
   activePaneId: null,
+  workspaceSwitchCount: 0,
 
   setView: (view) => set({ view }),
 
@@ -87,7 +89,8 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
       workspaces: [...s.workspaces, ws],
       activeWorkspaceId: id,
       activePaneId: ws.panes[0]?.id || null,
-      view: 'workspace'
+      view: 'workspace',
+      workspaceSwitchCount: s.workspaceSwitchCount + 1
     }))
   },
 
@@ -119,6 +122,7 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
         activeWorkspaceId: id,
         activePaneId: ws.panes[0]?.id || null,
         view: 'workspace',
+        workspaceSwitchCount: get().workspaceSwitchCount + 1,
         workspaces: get().workspaces.map((w) =>
           w.id === id
             ? { ...w, lastOpened: Date.now() }

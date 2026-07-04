@@ -2,7 +2,6 @@ import React, { useState, useCallback } from 'react'
 import { useWorkspaceStore } from '../store/workspaceStore'
 import { IconArrowLeft, IconGrid, IconPlus, IconTrash } from './icons'
 import { playClick, playCreate, playSwitch, playLandingClick } from '../utils/sound'
-import SidebarCanvas from './SidebarCanvas'
 
 const Sidebar: React.FC = () => {
   const workspaces = useWorkspaceStore((s) => s.workspaces)
@@ -54,7 +53,6 @@ const Sidebar: React.FC = () => {
       overflow: 'hidden',
       position: 'relative'
     }}>
-      <SidebarCanvas />
       <div style={{
         padding: '20px 20px 16px',
         borderBottom: '0.5px solid rgba(255,255,255,0.03)',

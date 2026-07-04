@@ -8,10 +8,25 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 8px 0 12px;
-  background: rgba(8, 8, 12, 0.94);
-  border-bottom: 0.5px solid rgba(255, 255, 255, 0.04);
+  background: #08080c;
+  border-bottom: 1px solid rgba(212, 163, 115, 0.06);
   z-index: 100;
   -webkit-app-region: drag;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.02);
+}
+
+.title-bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  background-size: 3px 3px;
+  pointer-events: none;
+  z-index: -1;
 }
 
 .title-bar-left {
@@ -33,12 +48,22 @@
   -webkit-app-region: no-drag;
 }
 
+.title-bar-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 10px 3px 8px;
+  border-radius: 5px;
+  border: 0.5px solid rgba(212, 163, 115, 0.1);
+  background: rgba(212, 163, 115, 0.03);
+}
+
 .title-bar-app-icon {
-  width: 18px;
-  height: 18px;
-  border-radius: 4px;
-  background: rgba(212, 163, 115, 0.06);
-  border: 0.5px solid rgba(212, 163, 115, 0.15);
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+  background: rgba(212, 163, 115, 0.08);
+  border: 0.5px solid rgba(212, 163, 115, 0.2);
   position: relative;
   flex-shrink: 0;
 }
@@ -47,7 +72,7 @@
   content: '';
   position: absolute;
   inset: 3px;
-  border: 1px solid rgba(212, 163, 115, 0.3);
+  border: 1px solid rgba(212, 163, 115, 0.35);
 }
 
 .title-bar-app-icon::after {
@@ -57,7 +82,17 @@
   right: 5px;
   top: 50%;
   height: 0.5px;
-  background: rgba(212, 163, 115, 0.2);
+  background: rgba(212, 163, 115, 0.25);
+}
+
+.title-bar-app-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: #d4a373;
+  letter-spacing: 1.5px;
+  text-transform: lowercase;
+  position: relative;
+  top: 0.5px;
 }
 
 .title-bar-traffic-lights {
@@ -119,16 +154,18 @@
 
 .title-bar-toggle-btn {
   padding: 6px;
-  border-radius: 5px;
+  border-radius: 4px;
   display: flex;
   color: var(--dim);
   transition: color 0.12s ease, background 0.12s ease;
   -webkit-app-region: no-drag;
+  border: 0.5px solid transparent;
 }
 
 .title-bar-toggle-btn:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.04);
   color: var(--muted);
+  border-color: rgba(255, 255, 255, 0.04);
 }
 
 .title-bar-toggle-btn.active {
@@ -148,7 +185,7 @@
   align-items: center;
   justify-content: center;
   color: var(--muted);
-  transition: background 0.12s ease, color 0.12s ease;
+  transition: background 0.1s ease, color 0.1s ease;
   border-radius: 0;
   position: relative;
 }
@@ -156,7 +193,8 @@
 .title-bar-windows-controls button svg {
   width: 13px;
   height: 13px;
-  stroke-width: 1.4;
+  stroke-width: 1.5;
+  stroke-linecap: square;
 }
 
 .title-bar-windows-controls button:hover {
@@ -169,10 +207,10 @@
 }
 
 .title-bar-windows-controls button.title-bar-close-btn:hover {
-  background: rgba(227, 86, 124, 0.12);
-  color: var(--error);
+  background: #e3567c;
+  color: #fff;
 }
 
 .title-bar-windows-controls button.title-bar-close-btn:active {
-  background: rgba(227, 86, 124, 0.18);
+  background: #c04060;
 }
