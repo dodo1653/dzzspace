@@ -3,8 +3,7 @@ import { Terminal } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
 import { WebLinksAddon } from 'xterm-addon-web-links'
 import { PremiumRenderer } from '../utils/premiumRenderer'
-import { scanForArtBlocks } from '../utils/asciiArtService'
-import { detectCliProfile, PROFILES, CliProfile } from '../utils/cliProfiles'
+import { detectCliProfile, PROFILES } from '../utils/cliProfiles'
 
 interface TerminalInstanceProps {
   paneId: string
@@ -37,9 +36,8 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
   const rendererRef = useRef<PremiumRenderer | null>(null)
   const profileRef = useRef<string>('default')
 
-  const applyProfile = useCallback((name: string, renderer: PremiumRenderer, term: Terminal) => {
+  const applyProfile = useCallback((name: string, _renderer: PremiumRenderer, term: Terminal) => {
     const p = PROFILES[name] || PROFILES.default
-    renderer.setCursorColor(p.accent)
     term.options.theme = {
       ...term.options.theme,
       cursor: p.accent,
@@ -110,56 +108,6 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
 
     renderer.isolateMeasurementElements(containerRef.current)
     renderer.applyCanvasQuality(containerRef.current)
-    renderer.createCursorOverlay(containerRef.current)
-    renderer.createArtOverlay(containerRef.current)
-
-    term.onCursorMove(() => {
-      if (!mountedRef.current || !rendererRef.current) return
-      const buf = term.buffer.active
-      rendererRef.current.updateCursor(buf.cursorX, buf.cursorY, '#d4a373')
-    })
-
-    let artDirty = true
-    term.onWriteParsed(() => {
-      if (!mountedRef.current || !rendererRef.current) return
-      artDirty = true
-    })
-
-    const artCheckInterval = setInterval(() => {
-      if (!artDirty || !mountedRef.current || !rendererRef.current) return
-      artDirty = false
-      try {
-        const buf = term.buffer.active
-        const rows = term.rows
-        const vp = buf.viewportY
-        const art = scanForArtBlocks(
-          (y: number) => {
-            const line = buf.getLine(y)
-            return line ? line.translateToString(false) : undefined
-          },
-          vp,
-          rows
-        )
-        if (art.blocks.length > 0) {
-          const block = art.blocks[0]
-          const fs = term.options.fontSize || 12
-          const lh = term.options.lineHeight || 1.35
-          const cellW = Math.round((containerRef.current?.clientWidth || 800) / term.cols)
-          const cellH = Math.round(fs * lh)
-          renderer.renderAsciiArt(
-            block.lines,
-            art.scale,
-            block.startRow,
-            cellW,
-            cellH,
-            fs
-          )
-        } else {
-          renderer.clearAsciiArt()
-        }
-      } catch {
-      }
-    }, 200)
 
     setTimeout(() => {
       try {
@@ -226,8 +174,6 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
           const p = rendererRef.current.calculateOptimalSize(h, d)
           const currentFs = term.options.fontSize
           if (p.fontSize !== currentFs) {
-            artDirty = true
-            rendererRef.current.clearAsciiArt()
             term.options.fontSize = p.fontSize
             term.options.lineHeight = p.lineHeight
             term.options.letterSpacing = 0
@@ -255,7 +201,6 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
       cleanup()
       exitCleanup()
       resizeObserver.disconnect()
-      clearInterval(artCheckInterval)
       if (optimizeTimer !== null) clearTimeout(optimizeTimer)
       window.dzz.pty.destroy(id)
       term.dispose()
