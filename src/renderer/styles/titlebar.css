@@ -53,36 +53,32 @@
   align-items: center;
   gap: 8px;
   padding: 3px 10px 3px 8px;
-  border-radius: 5px;
-  border: 0.5px solid rgba(212, 163, 115, 0.1);
+  border-radius: 3px;
+  border: 1px solid rgba(212, 163, 115, 0.1);
   background: rgba(212, 163, 115, 0.03);
 }
 
 .title-bar-app-icon {
   width: 20px;
   height: 20px;
-  border-radius: 3px;
+  border-radius: 2px;
   background: rgba(212, 163, 115, 0.08);
-  border: 0.5px solid rgba(212, 163, 115, 0.2);
+  border: 1px solid rgba(212, 163, 115, 0.2);
   position: relative;
   flex-shrink: 0;
 }
 
 .title-bar-app-icon::before {
-  content: '';
+  content: '>';
   position: absolute;
-  inset: 3px;
-  border: 1px solid rgba(212, 163, 115, 0.35);
-}
-
-.title-bar-app-icon::after {
-  content: '';
-  position: absolute;
-  left: 5px;
-  right: 5px;
-  top: 50%;
-  height: 0.5px;
-  background: rgba(212, 163, 115, 0.25);
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: rgba(212, 163, 115, 0.4);
+  line-height: 1;
 }
 
 .title-bar-app-name {
@@ -104,19 +100,15 @@
 }
 
 .title-bar-traffic-light {
-  width: 13px;
-  height: 13px;
-  border-radius: 50%;
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: filter 0.15s ease, opacity 0.15s ease, transform 0.1s ease;
+  transition: filter 0.15s ease, opacity 0.15s ease;
   position: relative;
-}
-
-.title-bar-traffic-light:active {
-  transform: scale(0.88);
 }
 
 .title-bar-traffic-light svg {

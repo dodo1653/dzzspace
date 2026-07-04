@@ -31,6 +31,7 @@ const PaneHeader: React.FC<PaneHeaderProps> = ({
       style={{ cursor: 'pointer' }}
     >
       <div className="pane-header-left">
+        <div className="pane-avatar">{pane.name.charAt(0)}</div>
         <div className="pane-number-wrap">
           <span className="pane-number" style={{ color: pane.color }}>
             {paneIndex}

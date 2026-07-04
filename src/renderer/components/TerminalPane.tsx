@@ -71,7 +71,10 @@ const TerminalPane: React.FC<TerminalPaneProps> = ({ pane, paneIndex, isActive, 
   const onTerminalDataRef = useMemo(() => () => {}, [])
 
   return (
-    <div className={`pane-container ${isActive ? 'active' : ''} pane-entrance`}>
+    <div
+      className={`pane-container ${isActive ? 'active' : ''} pane-entrance`}
+      style={{ '--pane-color': pane.color } as React.CSSProperties}
+    >
       <PaneHeader
         pane={pane}
         paneIndex={paneIndex}

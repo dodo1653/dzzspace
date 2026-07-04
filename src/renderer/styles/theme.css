@@ -29,8 +29,8 @@
   --space-5: 24px;
   --space-6: 32px;
 
-  --radius-pane: 10px;
-  --radius-modal: 12px;
+  --radius-pane: 4px;
+  --radius-modal: 6px;
 
   --shadow-pane: 0 2px 8px rgba(0, 0, 0, 0.35), 0 0 0 0.5px rgba(255, 255, 255, 0.03);
   --shadow-pane-active: 0 0 0 0.5px rgba(212, 163, 115, 0.15), 0 4px 12px rgba(0, 0, 0, 0.45), inset 0 0 0 0.5px rgba(212, 163, 115, 0.04);
