@@ -131,11 +131,13 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
     ptyIdRef.current = id
 
     let cwd = ''
-    window.dzz.pty.getCwd().then((path) => {
-      if (!mountedRef.current) return
-      cwd = path
-      onCwdChange(path)
-    })
+    if (id) {
+      window.dzz.pty.getCwd(id).then((path) => {
+        if (!mountedRef.current) return
+        cwd = path
+        onCwdChange(path)
+      })
+    }
 
     const cleanup = window.dzz.pty.onData(id, (data) => {
       term.write(data)

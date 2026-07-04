@@ -32,7 +32,7 @@ contextBridge.exposeInMainWorld('dzz', {
       ipcRenderer.on(channel, listener)
       return () => ipcRenderer.removeListener(channel, listener)
     },
-    getCwd: () => ipcRenderer.invoke('pty:cwd')
+    getCwd: (id: string) => ipcRenderer.invoke('pty:cwd', id)
   },
 
   store: {

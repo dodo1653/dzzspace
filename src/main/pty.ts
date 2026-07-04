@@ -3,19 +3,23 @@ import * as pty from '@lydell/node-pty'
 import { IPty } from '@lydell/node-pty'
 
 const sessions = new Map<string, IPty>()
+const sessionCwds = new Map<string, string>()
 let nextId = 1
 
 export function registerPtyHandlers() {
   ipcMain.handle('pty:create', (_event, options: { cwd?: string }) => {
     const id = `term-${nextId++}`
     const shell = 'powershell.exe'
-    const shellArgs = ['-NoProfile', '-NoLogo', '-NoExit', '-Command', "function prompt {'❯ '}"]
+    const shellArgs = ['-NoProfile', '-NoLogo', '-NoExit', '-Command', "function prompt {\"[$((Get-Location).Path.Replace($HOME,'~').Replace('\\','/'))] ❯ \"}"]
+
+    const cwd = options.cwd || process.env.USERPROFILE || 'C:\\'
+    sessionCwds.set(id, cwd)
 
     const term = pty.spawn(shell, shellArgs, {
       name: 'xterm-256color',
       cols: 80,
       rows: 24,
-      cwd: options.cwd || process.env.USERPROFILE || undefined,
+      cwd,
       env: { ...process.env } as { [key: string]: string }
     })
 
@@ -32,6 +36,7 @@ export function registerPtyHandlers() {
         win.webContents.send(`pty:exit:${id}`, exitCode)
       }
       sessions.delete(id)
+      sessionCwds.delete(id)
     })
 
     sessions.set(id, term)
@@ -64,7 +69,7 @@ export function registerPtyHandlers() {
     return sessions.has(id)
   })
 
-  ipcMain.handle('pty:cwd', () => {
-    return process.env.USERPROFILE || 'C:\\'
+  ipcMain.handle('pty:cwd', (_event, id: string) => {
+    return sessionCwds.get(id) || process.env.USERPROFILE || 'C:\\'
   })
 }

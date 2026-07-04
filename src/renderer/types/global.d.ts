@@ -21,7 +21,7 @@ declare global {
         exists: (id: string) => Promise<boolean>
         onData: (id: string, callback: (data: string) => void) => () => void
         onExit: (id: string, callback: (exitCode: number) => void) => () => void
-        getCwd: () => Promise<string>
+        getCwd: (id: string) => Promise<string>
       }
       store: {
         get: (key: string) => Promise<unknown>
