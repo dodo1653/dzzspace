@@ -39,11 +39,11 @@ interface Tier {
 }
 
 const TIERS: Tier[] = [
-  { min: 0, max: 350, fontSize: 10, lineHeight: 1.28, name: 'compact' },
-  { min: 350, max: 500, fontSize: 11, lineHeight: 1.32, name: 'snug' },
-  { min: 500, max: 700, fontSize: 12, lineHeight: 1.35, name: 'classic' },
-  { min: 700, max: 900, fontSize: 14, lineHeight: 1.38, name: 'spacious' },
-  { min: 900, max: Infinity, fontSize: 16, lineHeight: 1.40, name: 'generous' },
+  { min: 0, max: 350, fontSize: 10, lineHeight: 1.12, name: 'compact' },
+  { min: 350, max: 500, fontSize: 11, lineHeight: 1.12, name: 'snug' },
+  { min: 500, max: 700, fontSize: 12, lineHeight: 1.12, name: 'classic' },
+  { min: 700, max: 900, fontSize: 14, lineHeight: 1.12, name: 'spacious' },
+  { min: 900, max: Infinity, fontSize: 16, lineHeight: 1.12, name: 'generous' },
 ]
 
 export class PremiumRenderer {
@@ -103,19 +103,19 @@ export class PremiumRenderer {
     const wMetrics = ctx.measureText('W')
     const mMetrics = ctx.measureText('M')
     const boxMetrics = ctx.measureText('█')
-    const narrowMetrics = ctx.measureText('i')
+    const agMetrics = ctx.measureText('Ag')
 
-    const ascent = wMetrics.fontBoundingBoxAscent
-      || wMetrics.actualBoundingBoxAscent
-      || fontSize * 0.82
+    const ascent = agMetrics.actualBoundingBoxAscent
+      || wMetrics.fontBoundingBoxAscent
+      || fontSize * 0.8
 
-    const descent = wMetrics.fontBoundingBoxDescent
-      || wMetrics.actualBoundingBoxDescent
-      || fontSize * 0.18
+    const descent = agMetrics.actualBoundingBoxDescent
+      || wMetrics.fontBoundingBoxDescent
+      || fontSize * 0.15
 
-    const charWidth = Math.ceil(Math.max(wMetrics.width, mMetrics.width, boxMetrics.width))
-    const charHeight = Math.ceil(ascent + descent)
-    const baseline = Math.ceil(ascent)
+    const charWidth = Math.max(wMetrics.width, mMetrics.width, boxMetrics.width)
+    const charHeight = ascent + descent
+    const baseline = ascent
 
     return { charWidth, charHeight, baseline, fontSize }
   }
@@ -169,15 +169,13 @@ export class PremiumRenderer {
     }
   }
 
-  private computeLineHeight(containerHeight: number, fontSize: number, tier: Tier): number {
-    const targetRows = Math.round(containerHeight / (fontSize * tier.lineHeight))
-    if (targetRows >= 28) {
-      return Math.min(tier.lineHeight + 0.03, 1.45)
-    }
-    if (targetRows <= 18) {
-      return Math.max(tier.lineHeight - 0.03, 1.25)
-    }
-    return tier.lineHeight
+  private computeLineHeight(containerHeight: number, fontSize: number, _tier: Tier): number {
+    const targetRows = Math.round(containerHeight / (fontSize * 1.12))
+    if (targetRows >= 30) return 1.12
+    if (targetRows >= 24) return 1.12
+    if (targetRows >= 18) return 1.14
+    if (targetRows >= 12) return 1.16
+    return 1.18
   }
 
   setBgColor(color: string): void {
@@ -233,13 +231,16 @@ export class PremiumRenderer {
 
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
 
-    const artH = Math.ceil(lines.length * cellH * scale)
-    const artY = startRow * cellH
+    const metrics = this.measure(fontSize)
+    const cellHtight = metrics.charHeight * 1.12
+    const artH = Math.ceil(lines.length * cellHtight * scale)
+    const topPad = 14
+    const artY = startRow * cellHtight + topPad
 
     ctx.fillStyle = this.bgColor
-    ctx.fillRect(0, artY, w, artH)
+    ctx.fillRect(0, startRow * cellHtight, w, artH + topPad + 6)
 
-    const scaledSize = Math.max(6, Math.round(fontSize * scale * 0.85))
+    const scaledSize = Math.max(6, Math.round(fontSize * scale))
     ctx.font = `${scaledSize}px ${this.fontFamily}`
     ctx.textBaseline = 'top'
 
@@ -247,7 +248,7 @@ export class PremiumRenderer {
       const row = Math.floor(i * scale)
       if (row !== i || row > lines.length - 1) continue
       const line = lines[i]
-      const ly = artY + row * cellH * scale
+      const ly = artY + row * cellHtight * scale
 
       ctx.fillStyle = '#e0e0e8'
       ctx.globalAlpha = 0.85
@@ -344,10 +345,9 @@ export class PremiumRenderer {
       }
 
       const fontSize = parseInt(xtermEl.style.fontSize) || this.loadedFontSize || 12
-      const lineHeight = 1.35
 
       const cellW = Math.round(xtermEl.offsetWidth / 80)
-      const cellH = Math.round(fontSize * lineHeight)
+      const cellH = Math.round(fontSize * 1.12)
 
       const cx = this.cursorState.x * cellW
       const cy = this.cursorState.y * cellH
@@ -356,28 +356,11 @@ export class PremiumRenderer {
         ? (Math.floor(performance.now() / 530) % 2 === 0)
         : true
 
-      ctx.save()
-
       if (blinkOn) {
-        ctx.shadowColor = this.cursorColor
-        ctx.shadowBlur = 6
         ctx.fillStyle = this.cursorColor
-        ctx.globalAlpha = 0.90
-        ctx.fillRect(cx, cy, cellW, cellH)
-
-        ctx.shadowBlur = 0
-        ctx.globalAlpha = 0.10
-        ctx.fillStyle = '#ffffff'
-        ctx.fillRect(cx + 1, cy + 1, cellW - 2, 1)
-      } else {
-        ctx.shadowColor = this.cursorColor
-        ctx.shadowBlur = 6
-        ctx.globalAlpha = 0.35
-        ctx.fillStyle = this.cursorColor
+        ctx.globalAlpha = 0.88
         ctx.fillRect(cx, cy, cellW, cellH)
       }
-
-      ctx.restore()
 
       this.cursorFrame = requestAnimationFrame(draw)
     }

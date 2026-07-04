@@ -164,10 +164,10 @@ export function scanForArtBlocks(
 }
 
 function getScale(rows: number): number {
-  if (rows >= 30) return 1.0
-  if (rows >= 25) return 0.85
-  if (rows >= 18) return 0.75
-  if (rows >= 12) return 0.65
+  if (rows >= 40) return 1.0
+  if (rows >= 32) return 0.85
+  if (rows >= 24) return 0.75
+  if (rows >= 16) return 0.65
   return 0.50
 }
 
