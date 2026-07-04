@@ -2,7 +2,6 @@ import React, { useRef, useEffect, useCallback } from 'react'
 import { Terminal } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
 import { WebLinksAddon } from 'xterm-addon-web-links'
-import { WebglAddon } from 'xterm-addon-webgl'
 
 interface TerminalInstanceProps {
   paneId: string
@@ -33,6 +32,7 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
     if (initializedRef.current || !containerRef.current) return
     initializedRef.current = true
 
+    try {
     const term = new Terminal({
       fontFamily: "'JetBrains Mono', 'Cascadia Code', 'Consolas', 'monospace'",
       fontSize: 14,
@@ -76,15 +76,6 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
     fitAddonRef.current = fitAddon
 
     term.open(containerRef.current)
-
-    try {
-      const webglAddon = new WebglAddon()
-      term.loadAddon(webglAddon)
-      webglAddon.onContextLoss(() => {
-        webglAddon.dispose()
-      })
-    } catch {
-    }
 
     setTimeout(() => {
       try {
@@ -144,6 +135,9 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
       resizeObserver.disconnect()
       window.dzz.pty.destroy(id)
       term.dispose()
+    }
+    } catch (e) {
+      initializedRef.current = false
     }
   }, [paneId, onTerminalReady, onExit, onCwdChange, workspaceCwd])
 
