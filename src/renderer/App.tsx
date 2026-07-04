@@ -39,7 +39,7 @@ const App: React.FC = () => {
         position: 'relative',
         overflow: 'hidden'
       }}>
-        <BackgroundCanvas />
+        {view === 'landing' && <BackgroundCanvas />}
 
         <TitleBar onToggleSidebar={() => setSidebarVisible((v) => !v)} sidebarVisible={sidebarVisible} showSidebarToggle={view === 'workspace'} />
 

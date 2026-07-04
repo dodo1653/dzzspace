@@ -92,9 +92,24 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
   },
 
   deleteWorkspace: (id) => {
-    set((s) => ({
-      workspaces: s.workspaces.filter((w) => w.id !== id)
-    }))
+    set((s) => {
+      const remaining = s.workspaces.filter((w) => w.id !== id)
+      const wasActive = s.activeWorkspaceId === id
+      if (remaining.length === 0) {
+        return {
+          workspaces: [],
+          activeWorkspaceId: null,
+          activePaneId: null,
+          view: 'landing'
+        }
+      }
+      const nextWs = wasActive ? remaining[0] : s.workspaces.find((w) => w.id === s.activeWorkspaceId)
+      return {
+        workspaces: remaining,
+        activeWorkspaceId: wasActive ? remaining[0].id : s.activeWorkspaceId,
+        activePaneId: wasActive ? remaining[0].panes[0]?.id || null : s.activePaneId
+      }
+    })
   },
 
   selectWorkspace: (id) => {
@@ -106,7 +121,7 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
         view: 'workspace',
         workspaces: get().workspaces.map((w) =>
           w.id === id
-            ? { ...w, lastOpened: Date.now(), panes: w.panes.map((p) => ({ ...p, terminalId: null, status: 'starting' as const, exitCode: null })) }
+            ? { ...w, lastOpened: Date.now() }
             : w
         )
       })

@@ -1,19 +1,23 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useMemo } from 'react'
 import PaneHeader from './PaneHeader'
 import PaneFooter from './PaneFooter'
 import TerminalInstance from './TerminalInstance'
 import { useWorkspaceStore } from '../store/workspaceStore'
 import { useTerminalStore } from '../store/terminalStore'
-import { PaneConfig } from '../types'
+import { PaneConfig, LayoutPreset } from '../types'
 
 interface TerminalPaneProps {
   pane: PaneConfig
   paneIndex: number
   isActive: boolean
   workspaceCwd: string
+  paneCount: number
+  layout: LayoutPreset | undefined
 }
 
-const TerminalPane: React.FC<TerminalPaneProps> = ({ pane, paneIndex, isActive, workspaceCwd }) => {
+const LAYOUT_MAX: Record<string, number> = { '1': 1, '2v': 2, '4': 4, '6': 6, '9': 9 }
+
+const TerminalPane: React.FC<TerminalPaneProps> = ({ pane, paneIndex, isActive, workspaceCwd, paneCount, layout }) => {
   const renamePane = useWorkspaceStore((s) => s.renamePane)
   const closePane = useWorkspaceStore((s) => s.closePane)
   const setActivePane = useWorkspaceStore((s) => s.setActivePane)
@@ -23,6 +27,9 @@ const TerminalPane: React.FC<TerminalPaneProps> = ({ pane, paneIndex, isActive, 
   const addPane = useWorkspaceStore((s) => s.addPane)
   const registerTerminal = useTerminalStore((s) => s.registerTerminal)
   const [cwd, setCwd] = useState('~')
+
+  const maxPanes = layout ? (LAYOUT_MAX[String(layout)] ?? 9) : 9
+  const hideAddButton = paneCount >= maxPanes
 
   const handleTerminalReady = useCallback((id: string) => {
     setTerminalId(pane.id, id)
@@ -43,12 +50,25 @@ const TerminalPane: React.FC<TerminalPaneProps> = ({ pane, paneIndex, isActive, 
   }, [pane.id, setPaneStatus])
 
   const handleClose = useCallback(() => {
+    if (pane.terminalId) {
+      window.dzz.pty.destroy(pane.terminalId)
+    }
     closePane(pane.id)
-  }, [pane.id, closePane])
+  }, [pane.id, pane.terminalId, closePane])
 
   const handleAddPane = useCallback(() => {
     addPane()
   }, [addPane])
+
+  const handleRename = useCallback((name: string) => {
+    renamePane(pane.id, name)
+  }, [pane.id, renamePane])
+
+  const handleSelect = useCallback(() => {
+    setActivePane(pane.id)
+  }, [pane.id, setActivePane])
+
+  const onTerminalDataRef = useMemo(() => () => {}, [])
 
   return (
     <div className={`pane-container ${isActive ? 'active' : ''} pane-entrance`}>
@@ -56,10 +76,11 @@ const TerminalPane: React.FC<TerminalPaneProps> = ({ pane, paneIndex, isActive, 
         pane={pane}
         paneIndex={paneIndex}
         isActive={isActive}
-        onRename={(name) => renamePane(pane.id, name)}
+        hideAddButton={hideAddButton}
+        onRename={handleRename}
         onAddPane={handleAddPane}
         onClose={handleClose}
-        onSelect={() => setActivePane(pane.id)}
+        onSelect={handleSelect}
       />
       <div className="pane-body">
         <TerminalInstance
@@ -67,7 +88,7 @@ const TerminalPane: React.FC<TerminalPaneProps> = ({ pane, paneIndex, isActive, 
           terminalId={pane.terminalId}
           workspaceCwd={workspaceCwd}
           onTerminalReady={handleTerminalReady}
-          onTerminalData={() => {}}
+          onTerminalData={onTerminalDataRef}
           onExit={handleExit}
           onCwdChange={setCwd}
           onProfileChange={handleProfileChange}
@@ -78,4 +99,4 @@ const TerminalPane: React.FC<TerminalPaneProps> = ({ pane, paneIndex, isActive, 
   )
 }
 
-export default TerminalPane
+export default React.memo(TerminalPane)

@@ -66,6 +66,8 @@ const TerminalGrid: React.FC = () => {
                 paneIndex={idx + 1}
                 isActive={pane.id === activePaneId}
                 workspaceCwd={ws.cwd || ''}
+                paneCount={panes.length}
+                layout={ws.layout}
               />
             </div>
           ))}

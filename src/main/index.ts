@@ -29,6 +29,12 @@ function createWindow() {
   mainWindow.on('closed', () => {
     mainWindow = null
   })
+  mainWindow.on('blur', () => {
+    mainWindow?.webContents.send('app:blur')
+  })
+  mainWindow.on('focus', () => {
+    mainWindow?.webContents.send('app:focus')
+  })
 }
 
 app.whenReady().then(() => {

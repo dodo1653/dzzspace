@@ -60,6 +60,10 @@ export function registerPtyHandlers() {
     }
   })
 
+  ipcMain.handle('pty:exists', (_event, id: string) => {
+    return sessions.has(id)
+  })
+
   ipcMain.handle('pty:cwd', () => {
     return process.env.USERPROFILE || 'C:\\'
   })

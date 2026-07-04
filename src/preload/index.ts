@@ -19,6 +19,7 @@ contextBridge.exposeInMainWorld('dzz', {
     write: (id: string, data: string) => ipcRenderer.invoke('pty:write', id, data),
     resize: (id: string, cols: number, rows: number) => ipcRenderer.invoke('pty:resize', id, cols, rows),
     destroy: (id: string) => ipcRenderer.invoke('pty:destroy', id),
+    exists: (id: string) => ipcRenderer.invoke('pty:exists', id),
     onData: (id: string, callback: (data: string) => void) => {
       const channel = `pty:data:${id}`
       const listener = (_event: unknown, data: string) => callback(data)

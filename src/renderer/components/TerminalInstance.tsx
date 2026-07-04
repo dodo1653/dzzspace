@@ -35,6 +35,7 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
   const mountedRef = useRef(true)
   const rendererRef = useRef<PremiumRenderer | null>(null)
   const profileRef = useRef<string>('default')
+  const ptyIdRef = useRef<string | null>(null)
 
   const applyProfile = useCallback((name: string, _renderer: PremiumRenderer, term: Terminal) => {
     const p = PROFILES[name] || PROFILES.default
@@ -109,23 +110,25 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
     renderer.isolateMeasurementElements(containerRef.current)
     renderer.applyCanvasQuality(containerRef.current)
 
-    setTimeout(() => {
-      try {
-        fitAddon.fit()
-      } catch {
-      }
-    }, 50)
+    let id: string | null = terminalId
+    let existing = false
 
-    const id = await window.dzz.pty.create({
-      cwd: workspaceCwd || undefined
-    })
-
-    if (!id) {
-      initializedRef.current = false
-      return
+    if (id) {
+      existing = await window.dzz.pty.exists(id)
     }
 
-    onTerminalReady(id)
+    if (!id || !existing) {
+      id = await window.dzz.pty.create({
+        cwd: workspaceCwd || undefined
+      })
+      if (!id) {
+        initializedRef.current = false
+        return
+      }
+      onTerminalReady(id)
+    }
+
+    ptyIdRef.current = id
 
     let cwd = ''
     window.dzz.pty.getCwd().then((path) => {
@@ -155,42 +158,43 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
       window.dzz.pty.write(id, data)
     })
 
+    let resizeTimer: ReturnType<typeof setTimeout> | null = null
     let optimizeTimer: ReturnType<typeof setTimeout> | null = null
 
-    const resizeObserver = new ResizeObserver(() => {
+    const doFit = (retries = 0) => {
+      if (!mountedRef.current || retries > 12) return
+      requestAnimationFrame(() => {
+        try {
+          fitAddon.fit()
+          const dims = fitAddon.proposeDimensions()
+          if (dims && dims.cols > 0 && dims.rows > 0) {
+            window.dzz.pty.resize(id, dims.cols, dims.rows)
+            if (term.rows > 0) term.refresh(0, term.rows - 1)
+          } else {
+            doFit(retries + 1)
+          }
+        } catch {
+          doFit(retries + 1)
+        }
+      })
+    }
+    doFit()
+
+    const debouncedFit = () => {
       try {
         fitAddon.fit()
         const dims = fitAddon.proposeDimensions()
         if (dims && dims.cols > 0 && dims.rows > 0) {
           window.dzz.pty.resize(id, dims.cols, dims.rows)
+          if (term.rows > 0) term.refresh(0, term.rows - 1)
         }
-
-        if (optimizeTimer !== null) clearTimeout(optimizeTimer)
-        optimizeTimer = setTimeout(() => {
-          if (!mountedRef.current || !containerRef.current || !rendererRef.current) return
-          const h = containerRef.current.clientHeight
-          if (h <= 0) return
-          const d = window.devicePixelRatio || 1
-          const p = rendererRef.current.calculateOptimalSize(h, d)
-          const currentFs = term.options.fontSize
-          if (p.fontSize !== currentFs) {
-            term.options.fontSize = p.fontSize
-            term.options.lineHeight = p.lineHeight
-            term.options.letterSpacing = 0
-            requestAnimationFrame(() => {
-              try {
-                fitAddon.fit()
-                const d2 = fitAddon.proposeDimensions()
-                if (d2 && d2.cols > 0 && d2.rows > 0) {
-                  window.dzz.pty.resize(id, d2.cols, d2.rows)
-                }
-              } catch {
-              }
-            })
-          }
-        }, 250)
       } catch {
       }
+    }
+
+    const resizeObserver = new ResizeObserver(() => {
+      if (resizeTimer !== null) clearTimeout(resizeTimer)
+      resizeTimer = setTimeout(debouncedFit, 80)
     })
 
     if (containerRef.current) {
@@ -200,23 +204,24 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
     ;(term as any).__cleanup = () => {
       cleanup()
       exitCleanup()
-      resizeObserver.disconnect()
+      if (resizeTimer !== null) clearTimeout(resizeTimer)
       if (optimizeTimer !== null) clearTimeout(optimizeTimer)
-      window.dzz.pty.destroy(id)
+      resizeObserver.disconnect()
       term.dispose()
       if (rendererRef.current) {
         rendererRef.current.destroy()
         rendererRef.current = null
       }
+      ptyIdRef.current = null
     }
     } catch (e) {
       initializedRef.current = false
     }
-  }, [paneId, onTerminalReady, onExit, onCwdChange, onProfileChange, workspaceCwd, applyProfile])
+  }, [paneId, terminalId, onTerminalReady, onExit, onCwdChange, onProfileChange, workspaceCwd, applyProfile])
 
   useEffect(() => {
     mountedRef.current = true
-    if (!terminalId) {
+    if (!initializedRef.current) {
       initializeTerminal()
     }
 
@@ -228,7 +233,7 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
       termRef.current = null
       initializedRef.current = false
     }
-  }, [terminalId, initializeTerminal])
+  }, [initializeTerminal])
 
   useEffect(() => {
     const handleResize = () => {

@@ -1,12 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import { useWorkspaceStore } from '../store/workspaceStore'
-import { IconArrowLeft, IconGrid, IconPlus } from './icons'
+import { IconArrowLeft, IconGrid, IconPlus, IconTrash } from './icons'
 import { playClick, playCreate, playSwitch } from '../utils/sound'
 
 const Sidebar: React.FC = () => {
   const workspaces = useWorkspaceStore((s) => s.workspaces)
   const activeId = useWorkspaceStore((s) => s.activeWorkspaceId)
   const selectWorkspace = useWorkspaceStore((s) => s.selectWorkspace)
+  const deleteWorkspaceStore = useWorkspaceStore((s) => s.deleteWorkspace)
   const createWorkspace = useWorkspaceStore((s) => s.createWorkspace)
   const goBackToLanding = useWorkspaceStore((s) => s.goBackToLanding)
   const [showCreate, setShowCreate] = useState(false)
@@ -31,6 +32,15 @@ const Sidebar: React.FC = () => {
     selectWorkspace(id)
     playSwitch()
   }
+
+  const handleDelete = useCallback((e: React.MouseEvent, wsId: string, panes: { terminalId: string | null }[]) => {
+    e.stopPropagation()
+    panes.forEach((p) => {
+      if (p.terminalId) window.dzz.pty.destroy(p.terminalId)
+    })
+    deleteWorkspaceStore(wsId)
+    playClick()
+  }, [deleteWorkspaceStore])
 
   return (
     <div style={{
@@ -216,6 +226,7 @@ const Sidebar: React.FC = () => {
           return (
             <div
               key={ws.id}
+              className="sidebar-item"
               onClick={() => handleSelect(ws.id)}
               style={{
                 padding: '20px 22px',
@@ -225,17 +236,22 @@ const Sidebar: React.FC = () => {
                   : 'transparent',
                 borderLeft: isActive ? '3.5px solid var(--accent)' : '3.5px solid transparent',
                 borderBottom: '0.5px solid rgba(255,255,255,0.02)',
-                transition: 'all 0.15s ease'
+                transition: 'all 0.15s ease',
+                position: 'relative'
               }}
               onMouseEnter={(e) => {
                 if (!isActive) {
                   e.currentTarget.style.background = 'rgba(255,255,255,0.015)'
                 }
+                const btn = e.currentTarget.querySelector('.sidebar-delete-btn') as HTMLElement
+                if (btn) btn.style.opacity = '1'
               }}
               onMouseLeave={(e) => {
                 if (!isActive) {
                   e.currentTarget.style.background = 'transparent'
                 }
+                const btn = e.currentTarget.querySelector('.sidebar-delete-btn') as HTMLElement
+                if (btn) btn.style.opacity = '0'
               }}
             >
               <div style={{
@@ -265,6 +281,32 @@ const Sidebar: React.FC = () => {
                   </>
                 )}
               </div>
+              <button
+                className="sidebar-delete-btn"
+                onClick={(e) => handleDelete(e, ws.id, ws.panes)}
+                style={{
+                  position: 'absolute',
+                  top: 10,
+                  right: 10,
+                  padding: 4,
+                  borderRadius: 4,
+                  color: 'var(--dim)',
+                  opacity: 0,
+                  transition: 'opacity 0.12s ease, color 0.12s ease, background 0.12s ease',
+                  display: 'flex'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = 'var(--error)'
+                  e.currentTarget.style.background = 'rgba(227,86,124,0.1)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = 'var(--dim)'
+                  e.currentTarget.style.background = 'transparent'
+                }}
+                title="Delete workspace"
+              >
+                <IconTrash size={12} />
+              </button>
             </div>
           )
         })}
