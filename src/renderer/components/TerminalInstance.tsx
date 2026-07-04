@@ -14,7 +14,7 @@ interface TerminalInstanceProps {
   onCwdChange: (cwd: string) => void
 }
 
-const FONT_FAMILY = "'JetBrains Mono', 'Segoe UI Emoji', 'Symbols', 'Consolas', 'monospace'"
+const FONT_FAMILY = "'JetBrains Mono', Consolas, 'Courier New', monospace"
 
 const TerminalInstance: React.FC<TerminalInstanceProps> = ({
   paneId,
@@ -40,7 +40,8 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
     const initialHeight = containerRef.current.clientHeight
     const dpr = window.devicePixelRatio || 1
 
-    const renderer = new PremiumRenderer(FONT_FAMILY)
+    const renderer = new PremiumRenderer()
+    renderer.setFontFamily(FONT_FAMILY)
     rendererRef.current = renderer
 
     const profile = renderer.calculateOptimalSize(initialHeight, dpr)
@@ -50,8 +51,8 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
       fontSize: profile.fontSize,
       lineHeight: profile.lineHeight,
       letterSpacing: profile.letterSpacing,
-      fontWeight: '300',
-      fontWeightBold: '500',
+      fontWeight: '400',
+      fontWeightBold: '600',
       cursorBlink: true,
       cursorStyle: 'block',
       cursorWidth: 1,
@@ -159,7 +160,7 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
           if (p.fontSize !== currentFs) {
             term.options.fontSize = p.fontSize
             term.options.lineHeight = p.lineHeight
-            term.options.letterSpacing = p.letterSpacing
+            term.options.letterSpacing = 0
             requestAnimationFrame(() => {
               try {
                 fitAddon.fit()
