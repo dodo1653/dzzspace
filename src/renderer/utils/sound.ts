@@ -129,27 +129,27 @@ function softMuffle(volume: number) {
 }
 
 export function playLandingClick() {
-  softMuffle(0.18)
+  softMuffle(0.6)
 }
 
 export function playLandingHover() {
-  noise(0.002, 0.05, 500, 2000)
+  noise(0.002, 0.18, 500, 2000)
 }
 
 export function playLandingSwitch() {
-  lowThud(0.15)
-  setTimeout(() => softMuffle(0.12), 30)
+  lowThud(0.45)
+  setTimeout(() => softMuffle(0.35), 30)
 }
 
 export function playLandingCreate() {
-  lowThud(0.25)
+  lowThud(0.55)
   setTimeout(() => {
-    noise(0.004, 0.15, 300, 2000)
-    ring(500, 0.01, 0.12)
+    noise(0.004, 0.35, 300, 2000)
+    ring(500, 0.01, 0.25)
   }, 50)
 }
 
 export function playLandingDelete() {
-  lowThud(0.18)
-  noise(0.003, 0.1, 100, 600)
+  lowThud(0.5)
+  noise(0.003, 0.25, 100, 600)
 }

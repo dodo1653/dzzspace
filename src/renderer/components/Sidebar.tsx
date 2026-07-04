@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react'
 import { useWorkspaceStore } from '../store/workspaceStore'
 import { IconArrowLeft, IconGrid, IconPlus, IconTrash } from './icons'
-import { playClick, playCreate, playSwitch } from '../utils/sound'
+import { playClick, playCreate, playSwitch, playLandingClick } from '../utils/sound'
 
 const Sidebar: React.FC = () => {
   const workspaces = useWorkspaceStore((s) => s.workspaces)
@@ -60,7 +60,7 @@ const Sidebar: React.FC = () => {
         gap: 12
       }}>
         <button
-          onClick={() => { goBackToLanding(); playClick() }}
+          onClick={() => { goBackToLanding(); playLandingClick() }}
           style={{
             padding: 7,
             borderRadius: 6,
