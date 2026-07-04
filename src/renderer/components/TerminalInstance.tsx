@@ -35,12 +35,12 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
     try {
     const term = new Terminal({
       fontFamily: "'JetBrains Mono', 'Cascadia Code', 'Consolas', 'monospace'",
-      fontSize: 14,
-      lineHeight: 1.4,
-      letterSpacing: 0.2,
+      fontSize: 13,
+      lineHeight: 1.35,
+      letterSpacing: 0,
       cursorBlink: true,
-      cursorStyle: 'bar',
-      cursorWidth: 2,
+      cursorStyle: 'block',
+      cursorWidth: 1,
       allowTransparency: false,
       theme: {
         background: '#0c0c12',

@@ -165,15 +165,6 @@
 
 .pane-body .terminal .xterm {
   height: 100%;
-  padding: 10px 12px;
-}
-
-.pane-body .terminal .xterm .xterm-rows {
-  padding: 0;
-}
-
-.pane-body .terminal .xterm .xterm-cursor-layer {
-  mix-blend-mode: difference;
 }
 
 .pane-body .terminal .xterm-viewport {
