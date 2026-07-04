@@ -27,6 +27,7 @@ const TerminalPane: React.FC<TerminalPaneProps> = ({ pane, paneIndex, isActive, 
   const addPane = useWorkspaceStore((s) => s.addPane)
   const registerTerminal = useTerminalStore((s) => s.registerTerminal)
   const [cwd, setCwd] = useState('~')
+  const [activity, setActivity] = useState<'idle' | 'running'>('idle')
 
   const maxPanes = layout ? (LAYOUT_MAX[String(layout)] ?? 9) : 9
   const hideAddButton = paneCount >= maxPanes
@@ -34,6 +35,7 @@ const TerminalPane: React.FC<TerminalPaneProps> = ({ pane, paneIndex, isActive, 
   const handleTerminalReady = useCallback((id: string) => {
     setTerminalId(pane.id, id)
     setPaneStatus(pane.id, 'running')
+    setActivity('running')
     registerTerminal(pane.id, id, () => {})
   }, [pane.id, setTerminalId, setPaneStatus, registerTerminal])
 
@@ -47,6 +49,7 @@ const TerminalPane: React.FC<TerminalPaneProps> = ({ pane, paneIndex, isActive, 
 
   const handleExit = useCallback((exitCode: number) => {
     setPaneStatus(pane.id, 'exited', exitCode)
+    setActivity('idle')
   }, [pane.id, setPaneStatus])
 
   const handleClose = useCallback(() => {
@@ -71,11 +74,15 @@ const TerminalPane: React.FC<TerminalPaneProps> = ({ pane, paneIndex, isActive, 
   const onTerminalDataRef = useMemo(() => () => {}, [])
 
   return (
-    <div className={`pane-container ${isActive ? 'active' : ''} pane-entrance`}>
+    <div
+      className={`pane-container ${isActive ? 'active' : ''} pane-entrance`}
+      style={{ '--pane-color': pane.color } as React.CSSProperties}
+    >
       <PaneHeader
         pane={pane}
         paneIndex={paneIndex}
         isActive={isActive}
+        activity={activity}
         hideAddButton={hideAddButton}
         onRename={handleRename}
         onAddPane={handleAddPane}

@@ -7,6 +7,7 @@ interface PaneHeaderProps {
   pane: PaneConfig
   paneIndex: number
   isActive: boolean
+  activity?: 'idle' | 'running'
   hideAddButton?: boolean
   onRename: (name: string) => void
   onAddPane: () => void
@@ -18,12 +19,15 @@ const PaneHeader: React.FC<PaneHeaderProps> = ({
   pane,
   paneIndex,
   isActive,
+  activity,
   hideAddButton,
   onRename,
   onAddPane,
   onClose,
   onSelect
 }) => {
+  const activityClass = activity === 'running' ? 'running' : pane.status === 'exited' ? 'exited' : ''
+
   return (
     <div
       className="pane-header"
@@ -31,12 +35,14 @@ const PaneHeader: React.FC<PaneHeaderProps> = ({
       style={{ cursor: 'pointer' }}
     >
       <div className="pane-header-left">
+        <div className="pane-avatar">{pane.name.charAt(0)}</div>
         <div className="pane-number-wrap">
           <span className="pane-number" style={{ color: pane.color }}>
             {paneIndex}
           </span>
           <div className="pane-number-bar" style={{ background: pane.color }} />
         </div>
+        <span className={`pane-activity ${activityClass}`} />
         <ShellNameTag name={pane.name} onRename={onRename} />
       </div>
       <div className="pane-header-right">
