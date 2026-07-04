@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useCallback } from 'react'
 import { Terminal } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
 import { WebLinksAddon } from 'xterm-addon-web-links'
+import { PremiumRenderer } from '../utils/premiumRenderer'
 
 interface TerminalInstanceProps {
   paneId: string
@@ -12,6 +13,8 @@ interface TerminalInstanceProps {
   onExit: (exitCode: number) => void
   onCwdChange: (cwd: string) => void
 }
+
+const FONT_FAMILY = "'JetBrains Mono', 'Segoe UI Emoji', 'Symbols', 'Consolas', 'monospace'"
 
 const TerminalInstance: React.FC<TerminalInstanceProps> = ({
   paneId,
@@ -27,17 +30,26 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
   const fitAddonRef = useRef<FitAddon | null>(null)
   const initializedRef = useRef(false)
   const mountedRef = useRef(true)
+  const rendererRef = useRef<PremiumRenderer | null>(null)
 
   const initializeTerminal = useCallback(async () => {
     if (initializedRef.current || !containerRef.current) return
     initializedRef.current = true
 
     try {
+    const initialHeight = containerRef.current.clientHeight
+    const dpr = window.devicePixelRatio || 1
+
+    const renderer = new PremiumRenderer(FONT_FAMILY)
+    rendererRef.current = renderer
+
+    const profile = renderer.calculateOptimalSize(initialHeight, dpr)
+
     const term = new Terminal({
-      fontFamily: "'JetBrains Mono', 'Cascadia Code', 'Consolas', 'monospace'",
-      fontSize: 12,
-      lineHeight: 1.5,
-      letterSpacing: 0,
+      fontFamily: FONT_FAMILY,
+      fontSize: profile.fontSize,
+      lineHeight: profile.lineHeight,
+      letterSpacing: profile.letterSpacing,
       fontWeight: '300',
       fontWeightBold: '500',
       cursorBlink: true,
@@ -79,6 +91,16 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
 
     term.open(containerRef.current)
 
+    renderer.isolateMeasurementElements(containerRef.current)
+    renderer.applyCanvasQuality(containerRef.current)
+    renderer.createCursorOverlay(containerRef.current)
+
+    term.onCursorMove(() => {
+      if (!mountedRef.current || !rendererRef.current) return
+      const buf = term.buffer.active
+      rendererRef.current.updateCursor(buf.cursorX, buf.cursorY, '#d4a373')
+    })
+
     setTimeout(() => {
       try {
         fitAddon.fit()
@@ -116,6 +138,8 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
       window.dzz.pty.write(id, data)
     })
 
+    let optimizeTimer: ReturnType<typeof setTimeout> | null = null
+
     const resizeObserver = new ResizeObserver(() => {
       try {
         fitAddon.fit()
@@ -123,6 +147,31 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
         if (dims && dims.cols > 0 && dims.rows > 0) {
           window.dzz.pty.resize(id, dims.cols, dims.rows)
         }
+
+        if (optimizeTimer !== null) clearTimeout(optimizeTimer)
+        optimizeTimer = setTimeout(() => {
+          if (!mountedRef.current || !containerRef.current || !rendererRef.current) return
+          const h = containerRef.current.clientHeight
+          if (h <= 0) return
+          const d = window.devicePixelRatio || 1
+          const p = rendererRef.current.calculateOptimalSize(h, d)
+          const currentFs = term.options.fontSize
+          if (p.fontSize !== currentFs) {
+            term.options.fontSize = p.fontSize
+            term.options.lineHeight = p.lineHeight
+            term.options.letterSpacing = p.letterSpacing
+            requestAnimationFrame(() => {
+              try {
+                fitAddon.fit()
+                const d2 = fitAddon.proposeDimensions()
+                if (d2 && d2.cols > 0 && d2.rows > 0) {
+                  window.dzz.pty.resize(id, d2.cols, d2.rows)
+                }
+              } catch {
+              }
+            })
+          }
+        }, 250)
       } catch {
       }
     })
@@ -135,8 +184,13 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
       cleanup()
       exitCleanup()
       resizeObserver.disconnect()
+      if (optimizeTimer !== null) clearTimeout(optimizeTimer)
       window.dzz.pty.destroy(id)
       term.dispose()
+      if (rendererRef.current) {
+        rendererRef.current.destroy()
+        rendererRef.current = null
+      }
     }
     } catch (e) {
       initializedRef.current = false
