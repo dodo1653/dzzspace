@@ -81,39 +81,39 @@ function deepThump(volume: number) {
 }
 
 export function playClick() {
-  transientClick(0.15)
+  transientClick(0.4)
 }
 
 export function playHover() {
-  softTic(0.04)
+  softTic(0.12)
 }
 
 export function playSwitch() {
-  softTic(0.12)
-  setTimeout(() => softTic(0.08), 35)
+  softTic(0.3)
+  setTimeout(() => softTic(0.2), 35)
 }
 
 export function playCreate() {
-  deepThump(0.08)
-  setTimeout(() => transientClick(0.1), 40)
+  deepThump(0.25)
+  setTimeout(() => transientClick(0.3), 40)
 }
 
 export function playDelete() {
-  transientClick(0.12)
+  transientClick(0.35)
 }
 
 export function playLayoutChange() {
-  noise(0.005, 0.08, 1000, 6000)
-  ring(1800, 0.008, 0.07)
+  noise(0.005, 0.25, 1000, 6000)
+  ring(1800, 0.008, 0.2)
   setTimeout(() => {
-    noise(0.004, 0.1, 2000, 8000)
-    ring(3200, 0.006, 0.08)
+    noise(0.004, 0.3, 2000, 8000)
+    ring(3200, 0.006, 0.25)
   }, 50)
 }
 
 export function playWindowClose() {
-  deepThump(0.06)
-  setTimeout(() => transientClick(0.08), 30)
+  deepThump(0.2)
+  setTimeout(() => transientClick(0.25), 30)
 }
 
 // --- Darker, more ambient sounds for landing screen ---
@@ -129,27 +129,27 @@ function softMuffle(volume: number) {
 }
 
 export function playLandingClick() {
-  softMuffle(0.06)
+  softMuffle(0.18)
 }
 
 export function playLandingHover() {
-  noise(0.002, 0.015, 500, 2000)
+  noise(0.002, 0.05, 500, 2000)
 }
 
 export function playLandingSwitch() {
-  lowThud(0.05)
-  setTimeout(() => softMuffle(0.04), 30)
+  lowThud(0.15)
+  setTimeout(() => softMuffle(0.12), 30)
 }
 
 export function playLandingCreate() {
-  lowThud(0.08)
+  lowThud(0.25)
   setTimeout(() => {
-    noise(0.004, 0.05, 300, 2000)
-    ring(500, 0.01, 0.04)
+    noise(0.004, 0.15, 300, 2000)
+    ring(500, 0.01, 0.12)
   }, 50)
 }
 
 export function playLandingDelete() {
-  lowThud(0.06)
-  noise(0.003, 0.03, 100, 600)
+  lowThud(0.18)
+  noise(0.003, 0.1, 100, 600)
 }
