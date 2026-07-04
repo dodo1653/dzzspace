@@ -81,6 +81,10 @@ export class PremiumRenderer {
     this.loadedFontSize = 12
   }
 
+  setCursorColor(color: string): void {
+    this.cursorColor = color
+  }
+
   setFontFamily(family: string): void {
     if (family !== this.fontFamily) {
       this.fontFamily = family
@@ -339,7 +343,6 @@ export class PremiumRenderer {
         return
       }
 
-      const termRect = xtermEl.getBoundingClientRect()
       const fontSize = parseInt(xtermEl.style.fontSize) || this.loadedFontSize || 12
       const lineHeight = 1.35
 
@@ -353,21 +356,28 @@ export class PremiumRenderer {
         ? (Math.floor(performance.now() / 530) % 2 === 0)
         : true
 
+      ctx.save()
+
       if (blinkOn) {
-        ctx.save()
         ctx.shadowColor = this.cursorColor
-        ctx.shadowBlur = 8
+        ctx.shadowBlur = 6
         ctx.fillStyle = this.cursorColor
-        ctx.globalAlpha = 0.92
+        ctx.globalAlpha = 0.90
         ctx.fillRect(cx, cy, cellW, cellH)
 
         ctx.shadowBlur = 0
-        ctx.globalAlpha = 0.12
+        ctx.globalAlpha = 0.10
         ctx.fillStyle = '#ffffff'
         ctx.fillRect(cx + 1, cy + 1, cellW - 2, 1)
-
-        ctx.restore()
+      } else {
+        ctx.shadowColor = this.cursorColor
+        ctx.shadowBlur = 6
+        ctx.globalAlpha = 0.35
+        ctx.fillStyle = this.cursorColor
+        ctx.fillRect(cx, cy, cellW, cellH)
       }
+
+      ctx.restore()
 
       this.cursorFrame = requestAnimationFrame(draw)
     }

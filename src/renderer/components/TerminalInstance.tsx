@@ -4,6 +4,7 @@ import { FitAddon } from 'xterm-addon-fit'
 import { WebLinksAddon } from 'xterm-addon-web-links'
 import { PremiumRenderer } from '../utils/premiumRenderer'
 import { scanForArtBlocks } from '../utils/asciiArtService'
+import { detectCliProfile, PROFILES, CliProfile } from '../utils/cliProfiles'
 
 interface TerminalInstanceProps {
   paneId: string
@@ -13,6 +14,7 @@ interface TerminalInstanceProps {
   onTerminalData: (data: string) => void
   onExit: (exitCode: number) => void
   onCwdChange: (cwd: string) => void
+  onProfileChange?: (profile: string) => void
 }
 
 const FONT_FAMILY = "'JetBrains Mono', Consolas, 'Courier New', monospace"
@@ -24,7 +26,8 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
   onTerminalReady,
   onTerminalData,
   onExit,
-  onCwdChange
+  onCwdChange,
+  onProfileChange
 }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const termRef = useRef<Terminal | null>(null)
@@ -32,6 +35,18 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
   const initializedRef = useRef(false)
   const mountedRef = useRef(true)
   const rendererRef = useRef<PremiumRenderer | null>(null)
+  const profileRef = useRef<string>('default')
+
+  const applyProfile = useCallback((name: string, renderer: PremiumRenderer, term: Terminal) => {
+    const p = PROFILES[name] || PROFILES.default
+    renderer.setCursorColor(p.accent)
+    term.options.theme = {
+      ...term.options.theme,
+      cursor: p.accent,
+      selectionBackground: p.selectionBg,
+      selectionInactiveBackground: p.selectionInactiveBg
+    }
+  }, [])
 
   const initializeTerminal = useCallback(async () => {
     if (initializedRef.current || !containerRef.current) return
@@ -173,6 +188,15 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
 
     const cleanup = window.dzz.pty.onData(id, (data) => {
       term.write(data)
+
+      if (rendererRef.current) {
+        const detected = detectCliProfile(data, profileRef.current)
+        if (detected !== profileRef.current) {
+          profileRef.current = detected
+          applyProfile(detected, rendererRef.current, term)
+          if (onProfileChange) onProfileChange(detected)
+        }
+      }
     })
 
     const exitCleanup = window.dzz.pty.onExit(id, (exitCode) => {
@@ -243,7 +267,7 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
     } catch (e) {
       initializedRef.current = false
     }
-  }, [paneId, onTerminalReady, onExit, onCwdChange, workspaceCwd])
+  }, [paneId, onTerminalReady, onExit, onCwdChange, onProfileChange, workspaceCwd, applyProfile])
 
   useEffect(() => {
     mountedRef.current = true

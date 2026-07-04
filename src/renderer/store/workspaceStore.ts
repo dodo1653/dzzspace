@@ -58,6 +58,7 @@ interface WorkspaceState {
   setActivePane: (paneId: string) => void
   setPaneStatus: (paneId: string, status: PaneConfig['status'], exitCode?: number | null) => void
   setTerminalId: (paneId: string, terminalId: string) => void
+  setPaneColor: (paneId: string, color: string) => void
   closePane: (paneId: string) => void
   addPane: () => void
   goBackToLanding: () => void
@@ -175,6 +176,17 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
         ...w,
         panes: w.panes.map((p) =>
           p.id === paneId ? { ...p, terminalId } : p
+        )
+      }))
+    }))
+  },
+
+  setPaneColor: (paneId, color) => {
+    set((s) => ({
+      workspaces: s.workspaces.map((w) => ({
+        ...w,
+        panes: w.panes.map((p) =>
+          p.id === paneId ? { ...p, color } : p
         )
       }))
     }))

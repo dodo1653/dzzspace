@@ -19,6 +19,7 @@ const TerminalPane: React.FC<TerminalPaneProps> = ({ pane, paneIndex, isActive, 
   const setActivePane = useWorkspaceStore((s) => s.setActivePane)
   const setPaneStatus = useWorkspaceStore((s) => s.setPaneStatus)
   const setTerminalId = useWorkspaceStore((s) => s.setTerminalId)
+  const setPaneColor = useWorkspaceStore((s) => s.setPaneColor)
   const addPane = useWorkspaceStore((s) => s.addPane)
   const registerTerminal = useTerminalStore((s) => s.registerTerminal)
   const [cwd, setCwd] = useState('~')
@@ -28,6 +29,14 @@ const TerminalPane: React.FC<TerminalPaneProps> = ({ pane, paneIndex, isActive, 
     setPaneStatus(pane.id, 'running')
     registerTerminal(pane.id, id, () => {})
   }, [pane.id, setTerminalId, setPaneStatus, registerTerminal])
+
+  const handleProfileChange = useCallback((profile: string) => {
+    const accents: Record<string, string> = {
+      claude: '#b88a5c', kilo: '#b483d4', gemini: '#6d8ae8',
+      codex: '#4cc2a0', devin: '#58b9c6'
+    }
+    setPaneColor(pane.id, accents[profile] || pane.color)
+  }, [pane.id, pane.color, setPaneColor])
 
   const handleExit = useCallback((exitCode: number) => {
     setPaneStatus(pane.id, 'exited', exitCode)
@@ -61,6 +70,7 @@ const TerminalPane: React.FC<TerminalPaneProps> = ({ pane, paneIndex, isActive, 
           onTerminalData={() => {}}
           onExit={handleExit}
           onCwdChange={setCwd}
+          onProfileChange={handleProfileChange}
         />
       </div>
       <PaneFooter pane={pane} cwd={cwd} />
