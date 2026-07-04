@@ -54,6 +54,9 @@ export class PremiumRenderer {
   private cursorFrame: number | null = null
   private cursorState: CursorState = { x: 0, y: 0, visible: false, blinking: true }
   private cursorColor = '#d4a373'
+  private artCanvas: HTMLCanvasElement | null = null
+  private artCtx: CanvasRenderingContext2D | null = null
+  private bgColor = '#0c0c12'
   private fontFamily: string
   private loadedFontSize = 12
   private fontLoadAttempted = false
@@ -171,6 +174,100 @@ export class PremiumRenderer {
       return Math.max(tier.lineHeight - 0.03, 1.25)
     }
     return tier.lineHeight
+  }
+
+  setBgColor(color: string): void {
+    this.bgColor = color
+  }
+
+  createArtOverlay(container: HTMLElement): HTMLCanvasElement {
+    if (this.artCanvas) {
+      this.destroyArtCanvas()
+    }
+    const canvas = document.createElement('canvas')
+    canvas.style.position = 'absolute'
+    canvas.style.top = '0'
+    canvas.style.left = '0'
+    canvas.style.width = '100%'
+    canvas.style.height = '100%'
+    canvas.style.pointerEvents = 'none'
+    canvas.style.zIndex = '10'
+    container.appendChild(canvas)
+    this.artCanvas = canvas
+    this.artCtx = canvas.getContext('2d')
+    return canvas
+  }
+
+  renderAsciiArt(
+    lines: string[],
+    scale: number,
+    startRow: number,
+    cellW: number,
+    cellH: number,
+    fontSize: number
+  ): void {
+    const ctx = this.artCtx
+    const canvas = this.artCanvas
+    if (!ctx || !canvas) return
+
+    const parent = canvas.parentElement
+    if (!parent) return
+
+    const dpr = window.devicePixelRatio || 1
+    const w = canvas.offsetWidth
+    const h = canvas.offsetHeight
+
+    if (w <= 0 || h <= 0) return
+
+    const bw = Math.round(w * dpr)
+    const bh = Math.round(h * dpr)
+
+    if (canvas.width !== bw || canvas.height !== bh) {
+      canvas.width = bw
+      canvas.height = bh
+    }
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+
+    const artH = Math.ceil(lines.length * cellH * scale)
+    const artY = startRow * cellH
+
+    ctx.fillStyle = this.bgColor
+    ctx.fillRect(0, artY, w, artH)
+
+    const scaledSize = Math.max(6, Math.round(fontSize * scale * 0.85))
+    ctx.font = `${scaledSize}px ${this.fontFamily}`
+    ctx.textBaseline = 'top'
+
+    for (let i = 0; i < lines.length; i++) {
+      const row = Math.floor(i * scale)
+      if (row !== i || row > lines.length - 1) continue
+      const line = lines[i]
+      const ly = artY + row * cellH * scale
+
+      ctx.fillStyle = '#e0e0e8'
+      ctx.globalAlpha = 0.85
+      ctx.fillText(line, 0, ly)
+      ctx.globalAlpha = 1
+    }
+  }
+
+  clearAsciiArt(): void {
+    const ctx = this.artCtx
+    const canvas = this.artCanvas
+    if (!ctx || !canvas) return
+    const dpr = window.devicePixelRatio || 1
+    const w = canvas.offsetWidth
+    const h = canvas.offsetHeight
+    if (w <= 0 || h <= 0) return
+    const bw = Math.round(w * dpr)
+    const bh = Math.round(h * dpr)
+    if (canvas.width !== bw || canvas.height !== bh) {
+      canvas.width = bw
+      canvas.height = bh
+    }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    ctx.clearRect(0, 0, w, h)
   }
 
   createCursorOverlay(container: HTMLElement): HTMLCanvasElement {
@@ -338,9 +435,18 @@ export class PremiumRenderer {
     }
   }
 
+  private destroyArtCanvas(): void {
+    if (this.artCanvas && this.artCanvas.parentNode) {
+      this.artCanvas.parentNode.removeChild(this.artCanvas)
+    }
+    this.artCanvas = null
+    this.artCtx = null
+  }
+
   destroy(): void {
     this.stopCursorLoop()
     this.destroyCursorCanvas()
+    this.destroyArtCanvas()
     if (this.measureCanvas.parentNode) {
       this.measureCanvas.parentNode.removeChild(this.measureCanvas)
     }
