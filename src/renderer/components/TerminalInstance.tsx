@@ -37,7 +37,7 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
       fontFamily: "'JetBrains Mono', 'Cascadia Code', 'Consolas', 'monospace'",
       fontSize: 12,
       lineHeight: 1.5,
-      letterSpacing: 0.35,
+      letterSpacing: 0,
       fontWeight: '300',
       fontWeightBold: '500',
       cursorBlink: true,
