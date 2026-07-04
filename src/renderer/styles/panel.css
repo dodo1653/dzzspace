@@ -236,5 +236,4 @@
   display: grid;
   gap: var(--pane-gap);
   height: 100%;
-  transition: grid-template-columns 250ms ease-out, grid-template-rows 250ms ease-out;
 }

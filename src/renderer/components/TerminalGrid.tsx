@@ -26,52 +26,44 @@ const TerminalGrid: React.FC = () => {
   const activeId = useWorkspaceStore((s) => s.activeWorkspaceId)
   const activePaneId = useWorkspaceStore((s) => s.activePaneId)
 
-  const ws = workspaces.find((w) => w.id === activeId)
-  if (!ws) return null
-
-  const { cols, rows } = getGridTemplate(ws.layout)
-  const panes = ws.panes
-
-  if (panes.length === 0) {
-    return (
-      <div style={{
-        flex: 1,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: 'var(--dim)',
-        fontFamily: 'var(--font-mono)',
-        fontSize: 12
-      }}>
-        No panes. Add one with Ctrl+Shift+N
-      </div>
-    )
-  }
+  if (workspaces.length === 0) return null
 
   return (
     <div style={{ flex: 1, position: 'relative', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
-      <div className="grid-area">
-        <div
-          className="grid-container"
-          style={{
-            gridTemplateColumns: cols,
-            gridTemplateRows: rows,
-            gridAutoFlow: 'row'
-          }}
-        >
-          {panes.map((pane: PaneConfig, idx: number) => (
-            <div key={pane.id} style={{ minWidth: 0, minHeight: 0, display: 'flex' }}>
-              <TerminalPane
-                pane={pane}
-                paneIndex={idx + 1}
-                isActive={pane.id === activePaneId}
-                workspaceCwd={ws.cwd || ''}
-                paneCount={panes.length}
-                layout={ws.layout}
-              />
+      <div className="grid-area" style={{ position: 'relative' }}>
+        {workspaces.map((ws) => {
+          const isActive = ws.id === activeId
+          const { cols, rows } = getGridTemplate(ws.layout)
+          const panes = ws.panes
+          if (panes.length === 0) return null
+
+          return (
+            <div
+              key={ws.id}
+              className="grid-container"
+              style={{
+                position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+                gridTemplateColumns: cols,
+                gridTemplateRows: rows,
+                gridAutoFlow: 'row',
+                display: isActive ? 'grid' : 'none'
+              }}
+            >
+              {panes.map((pane: PaneConfig, idx: number) => (
+                <div key={pane.id} style={{ minWidth: 0, minHeight: 0, display: 'flex' }}>
+                  <TerminalPane
+                    pane={pane}
+                    paneIndex={idx + 1}
+                    isActive={pane.id === activePaneId}
+                    workspaceCwd={ws.cwd || ''}
+                    paneCount={panes.length}
+                    layout={ws.layout}
+                  />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          )
+        })}
       </div>
       <LayoutSwitcher />
     </div>
