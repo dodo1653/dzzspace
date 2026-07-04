@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useCallback } from 'react'
 import { Terminal } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
 import { WebLinksAddon } from 'xterm-addon-web-links'
+import { WebglAddon } from 'xterm-addon-webgl'
 
 interface TerminalInstanceProps {
   paneId: string
@@ -26,6 +27,7 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
   const termRef = useRef<Terminal | null>(null)
   const fitAddonRef = useRef<FitAddon | null>(null)
   const initializedRef = useRef(false)
+  const mountedRef = useRef(true)
 
   const initializeTerminal = useCallback(async () => {
     if (initializedRef.current || !containerRef.current) return
@@ -34,8 +36,8 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
     const term = new Terminal({
       fontFamily: "'JetBrains Mono', 'Cascadia Code', 'Consolas', 'monospace'",
       fontSize: 14,
-      lineHeight: 1.35,
-      letterSpacing: 0.15,
+      lineHeight: 1.4,
+      letterSpacing: 0.2,
       cursorBlink: true,
       cursorStyle: 'bar',
       cursorWidth: 2,
@@ -75,8 +77,20 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
 
     term.open(containerRef.current)
 
+    try {
+      const webglAddon = new WebglAddon()
+      term.loadAddon(webglAddon)
+      webglAddon.onContextLoss(() => {
+        webglAddon.dispose()
+      })
+    } catch {
+    }
+
     setTimeout(() => {
-      fitAddon.fit()
+      try {
+        fitAddon.fit()
+      } catch {
+      }
     }, 50)
 
     const id = await window.dzz.pty.create({
@@ -92,6 +106,7 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
 
     let cwd = ''
     window.dzz.pty.getCwd().then((path) => {
+      if (!mountedRef.current) return
       cwd = path
       onCwdChange(path)
     })
@@ -112,7 +127,7 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
       try {
         fitAddon.fit()
         const dims = fitAddon.proposeDimensions()
-        if (dims) {
+        if (dims && dims.cols > 0 && dims.rows > 0) {
           window.dzz.pty.resize(id, dims.cols, dims.rows)
         }
       } catch {
@@ -127,16 +142,19 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
       cleanup()
       exitCleanup()
       resizeObserver.disconnect()
+      window.dzz.pty.destroy(id)
       term.dispose()
     }
   }, [paneId, onTerminalReady, onExit, onCwdChange, workspaceCwd])
 
   useEffect(() => {
+    mountedRef.current = true
     if (!terminalId) {
       initializeTerminal()
     }
 
     return () => {
+      mountedRef.current = false
       if (termRef.current && (termRef.current as any).__cleanup) {
         (termRef.current as any).__cleanup()
       }

@@ -47,7 +47,7 @@ export function registerPtyHandlers() {
 
   ipcMain.handle('pty:resize', (_event, id: string, cols: number, rows: number) => {
     const term = sessions.get(id)
-    if (term) {
+    if (term && cols > 0 && rows > 0) {
       term.resize(cols, rows)
     }
   })

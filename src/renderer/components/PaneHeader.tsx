@@ -29,15 +29,12 @@ const PaneHeader: React.FC<PaneHeaderProps> = ({
       style={{ cursor: 'pointer' }}
     >
       <div className="pane-header-left">
-        <span
-          className="pane-number"
-          style={{
-            background: pane.color,
-            color: '#0a0a0f'
-          }}
-        >
-          {paneIndex}
-        </span>
+        <div className="pane-number-wrap">
+          <span className="pane-number" style={{ color: pane.color }}>
+            {paneIndex}
+          </span>
+          <div className="pane-number-bar" style={{ background: pane.color }} />
+        </div>
         <ShellNameTag name={pane.name} onRename={onRename} />
       </div>
       <div className="pane-header-right">
