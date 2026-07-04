@@ -9,7 +9,7 @@ export function registerPtyHandlers() {
   ipcMain.handle('pty:create', (_event, options: { cwd?: string }) => {
     const id = `term-${nextId++}`
     const shell = 'powershell.exe'
-    const shellArgs = ['-NoLogo', '-NoExit']
+    const shellArgs = ['-NoProfile', '-NoLogo', '-NoExit', '-Command', "function prompt {'❯ '}"]
 
     const term = pty.spawn(shell, shellArgs, {
       name: 'xterm-256color',
