@@ -55,7 +55,7 @@
     },
     "win": {
       "target": "nsis",
-      "icon": "buildResources/icon.png"
+      "icon": "buildResources/icon.ico"
     },
     "nsis": {
       "oneClick": false,
@@ -71,11 +71,11 @@
     },
     "mac": {
       "target": "zip",
-      "icon": "buildResources/icon.png"
+      "icon": "buildResources/icon.ico"
     },
     "linux": {
       "target": "AppImage",
-      "icon": "buildResources/icon.png"
+      "icon": "buildResources/icon.ico"
     }
   },
   "devDependencies": {
