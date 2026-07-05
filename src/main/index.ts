@@ -1,8 +1,48 @@
 import { app, BrowserWindow, ipcMain, dialog } from 'electron'
 import { join } from 'path'
+import { autoUpdater } from 'electron-updater'
 import { registerPtyHandlers } from './pty'
 
 let mainWindow: BrowserWindow | null = null
+
+autoUpdater.autoDownload = false
+autoUpdater.autoInstallOnAppQuit = true
+
+function setupAutoUpdater() {
+  autoUpdater.on('update-available', (info) => {
+    mainWindow?.webContents.send('update:available', info.version)
+  })
+
+  autoUpdater.on('update-not-available', () => {
+    mainWindow?.webContents.send('update:not-available')
+  })
+
+  autoUpdater.on('download-progress', (progress) => {
+    mainWindow?.webContents.send('update:progress', progress.percent)
+  })
+
+  autoUpdater.on('update-downloaded', () => {
+    mainWindow?.webContents.send('update:downloaded')
+  })
+
+  autoUpdater.on('error', (err) => {
+    console.error('Auto-updater error:', err.message)
+  })
+
+  ipcMain.on('update:check', () => {
+    autoUpdater.checkForUpdates()
+  })
+
+  ipcMain.on('update:download', () => {
+    autoUpdater.downloadUpdate()
+  })
+
+  ipcMain.on('update:install', () => {
+    autoUpdater.quitAndInstall()
+  })
+
+  setTimeout(() => autoUpdater.checkForUpdates(), 3000)
+}
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -40,6 +80,7 @@ function createWindow() {
 app.whenReady().then(() => {
   registerPtyHandlers()
   createWindow()
+  setupAutoUpdater()
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {

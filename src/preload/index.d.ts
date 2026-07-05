@@ -26,6 +26,15 @@ declare global {
       store: {
         get: (key: string) => Promise<unknown>
         set: (key: string, value: unknown) => Promise<void>
+      },
+      update: {
+        check: () => void
+        download: () => void
+        install: () => void
+        onAvailable: (callback: (version: string) => void) => () => void
+        onNotAvailable: (callback: () => void) => () => void
+        onProgress: (callback: (percent: number) => void) => () => void
+        onDownloaded: (callback: () => void) => () => void
       }
     }
   }

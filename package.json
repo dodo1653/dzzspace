@@ -1,6 +1,6 @@
 {
   "name": "dzzspace",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Premium multi-terminal desktop workspace — grid-based PowerShell terminals with ultra-aesthetic UI.",
   "main": "./out/main/index.js",
   "scripts": {
@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@lydell/node-pty": "^1.0.0",
+    "electron-updater": "^6.8.9",
     "framer-motion": "^11.0.0",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
@@ -33,6 +34,11 @@
     "asarUnpack": [
       "node_modules/@lydell/node-pty/**"
     ],
+    "publish": {
+      "provider": "github",
+      "owner": "dodo1653",
+      "repo": "dzzspace"
+    },
     "win": {
       "target": "nsis",
       "icon": "buildResources/icon.png"

@@ -38,5 +38,31 @@ contextBridge.exposeInMainWorld('dzz', {
   store: {
     get: (key: string) => ipcRenderer.invoke('store:get', key),
     set: (key: string, value: unknown) => ipcRenderer.invoke('store:set', key, value)
+  },
+
+  update: {
+    check: () => ipcRenderer.send('update:check'),
+    download: () => ipcRenderer.send('update:download'),
+    install: () => ipcRenderer.send('update:install'),
+    onAvailable: (callback: (version: string) => void) => {
+      const listener = (_event: unknown, version: string) => callback(version)
+      ipcRenderer.on('update:available', listener)
+      return () => ipcRenderer.removeListener('update:available', listener)
+    },
+    onNotAvailable: (callback: () => void) => {
+      const listener = () => callback()
+      ipcRenderer.on('update:not-available', listener)
+      return () => ipcRenderer.removeListener('update:not-available', listener)
+    },
+    onProgress: (callback: (percent: number) => void) => {
+      const listener = (_event: unknown, percent: number) => callback(percent)
+      ipcRenderer.on('update:progress', listener)
+      return () => ipcRenderer.removeListener('update:progress', listener)
+    },
+    onDownloaded: (callback: () => void) => {
+      const listener = () => callback()
+      ipcRenderer.on('update:downloaded', listener)
+      return () => ipcRenderer.removeListener('update:downloaded', listener)
+    }
   }
 })
