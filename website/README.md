@@ -4,6 +4,23 @@ A deep-dive into the visual design, animation techniques, and engineering decisi
 
 ---
 
+## Brand Identity
+
+| Element | Detail |
+|---|---|
+| **Brand name** | dzzspace (lowercase, stylized as `dzzspace`) |
+| **Logo** | Custom Shortcut-style logo (`official-logo.png`) — dark rounded square with brand mark |
+| **Tagline** | *Premium multi-terminal workspace* |
+| **Typography** | Press Start 2P (brand/headings), JetBrains Mono (code/terminals), Inter (UI/body) |
+| **Accent color** | Gold `#d4a373` — used for shimmer, hover states, decorative accents, badges |
+| **Background** | Near-black `#08080e` with warm tint — never pure `#000` |
+| **Design principles** | Dark foundation, gold accent, no emojis, intentional restraint, no AI slop, hardware-accelerated CSS animations |
+| **Signature effect** | Shimmer gold gradient sweep on brand text + breathing gold glow on imagery |
+| **Signature easing** | `cubic-bezier(0.16, 1, 0.3, 1)` — fast start, slow deceleration with subtle overshoot |
+| **Voice** | Technical, premium, concise — describes the product without hype |
+
+---
+
 ## Table of Contents
 
 1. [Design Philosophy](#1-design-philosophy)

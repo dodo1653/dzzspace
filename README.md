@@ -4,6 +4,20 @@ A premium multi-terminal desktop workspace for developers who live in the termin
 
 ![Landing screen](website/showcase2.png)
 
+## Brand Identity
+
+| Element | Detail |
+|---|---|
+| **Brand name** | dzzspace (lowercase, stylized as `dzzspace`) |
+| **Logo** | Custom Shortcut-style logo (`website/official-logo.png`) — dark rounded square with brand mark |
+| **Tagline** | *Premium multi-terminal workspace* |
+| **Typography** | Press Start 2P (brand/headings), JetBrains Mono (code/terminals), Inter (UI/body) |
+| **Accent color** | Gold `#d4a373` — used sparingly for active states, shimmer, borders, hover effects |
+| **Background** | Near-black `#08080c` with warm tint — never pure `#000` |
+| **Design principles** | Dark foundation, gold accent, no emojis (custom SVG icons only), intentional restraint, no AI slop, hardware-accelerated animations |
+| **Shimmer** | Animated gold gradient sweep on brand text — continuous `4s ease-in-out` cycle via `background-clip: text` |
+| **Voice** | Technical, premium, concise — describes what it does without hype |
+
 ## Download
 
 **Windows 10 / 11** — Download the latest installer from the [Releases page](https://github.com/dodo1653/dzzspace/releases).

@@ -4,6 +4,23 @@ A comprehensive guide to the premium UI effects, animation techniques, and aesth
 
 ---
 
+## Brand Identity
+
+| Element | Detail |
+|---|---|
+| **Brand name** | dzzspace (lowercase, stylized as `dzzspace`) |
+| **Logo** | Custom Shortcut-style logo — dark rounded square with brand mark |
+| **Tagline** | *Premium multi-terminal workspace* |
+| **Typography** | Press Start 2P (brand/headings), JetBrains Mono (code/terminals), Inter (UI/body) |
+| **Accent color** | Gold `#d4a373` — used sparingly, never saturated |
+| **Background** | Near-black `#08080c` with warm tint |
+| **Design principles** | Dark foundation, gold accent, no emojis (custom SVG icons only), intentional restraint, no AI slop, hardware-accelerated animations only |
+| **Shimmer signature** | Animated gold gradient sweep on brand text via `background-clip: text` |
+| **Easing signature** | `cubic-bezier(0.16, 1, 0.3, 1)` used for all animations across app and website |
+| **Voice** | Technical, premium, concise — no hype, just quality |
+
+---
+
 ## Table of Contents
 
 1. [Landing Screen Shimmer Title](#1-landing-screen-shimmer-title)
