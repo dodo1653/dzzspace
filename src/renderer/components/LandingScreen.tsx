@@ -109,13 +109,18 @@ const LandingScreen: React.FC = () => {
             />
           </div>
           <h1 className="hero-title" style={{
-            fontFamily: 'var(--font-sans)',
-            fontSize: 60, fontWeight: 160,
-            letterSpacing: '-0.05em',
-            color: '#f0f0f5',
+            fontFamily: "'Press Start 2P', monospace",
+            fontSize: 48, fontWeight: 400,
+            letterSpacing: '0.04em',
             marginBottom: 22,
-            lineHeight: 1,
-            textRendering: 'geometricPrecision'
+            lineHeight: 1.2,
+            textRendering: 'geometricPrecision',
+            background: 'linear-gradient(135deg, #f0e6d0 0%, #d4a373 45%, #c8955a 70%, #b88a5a 100%)',
+            backgroundSize: '200% auto',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            animation: 'shimmer 4s ease-in-out infinite'
           }}>
             dzzspace
           </h1>

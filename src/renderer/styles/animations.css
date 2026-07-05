@@ -84,6 +84,11 @@
   }
 }
 
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
 @keyframes glow-pulse {
   0%, 100% {
     box-shadow: 0 8px 40px rgba(212, 163, 115, 0.06), 0 2px 12px rgba(0,0,0,0.3);
@@ -121,7 +126,8 @@
 }
 
 .hero-title {
-  animation: hero-fade-in 800ms ease-out both;
+  animation: hero-fade-in 800ms ease-out both, shimmer 4s ease-in-out infinite;
+  animation-delay: 0s, 0.8s;
 }
 
 .hero-accent {
