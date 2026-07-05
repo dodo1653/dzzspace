@@ -99,6 +99,17 @@ export class PremiumRenderer {
   }
 
   calculateOptimalSize(containerHeight: number, dpr: number): SizeProfile {
+    if (containerHeight <= 0) {
+      return {
+        fontSize: sharedFontSize !== null ? sharedFontSize : 12,
+        lineHeight: sharedLineHeight !== null ? sharedLineHeight : 1.12,
+        letterSpacing: 0,
+        fontWeight: 400,
+        fontWeightBold: 600,
+        tier: 'inactive'
+      }
+    }
+
     if (sharedFontSize !== null && sharedLineHeight !== null) {
       return {
         fontSize: sharedFontSize,

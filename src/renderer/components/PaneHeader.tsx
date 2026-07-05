@@ -1,6 +1,6 @@
 import React from 'react'
 import ShellNameTag from './ShellNameTag'
-import { IconPlus, IconClose } from './icons'
+import { IconPlus, IconClose, IconRefresh } from './icons'
 import { PaneConfig } from '../types'
 
 interface PaneHeaderProps {
@@ -12,6 +12,7 @@ interface PaneHeaderProps {
   onAddPane: () => void
   onClose: () => void
   onSelect: () => void
+  onRefresh: () => void
 }
 
 const PaneHeader: React.FC<PaneHeaderProps> = ({
@@ -22,7 +23,8 @@ const PaneHeader: React.FC<PaneHeaderProps> = ({
   onRename,
   onAddPane,
   onClose,
-  onSelect
+  onSelect,
+  onRefresh
 }) => {
   return (
     <div
@@ -46,6 +48,9 @@ const PaneHeader: React.FC<PaneHeaderProps> = ({
             <IconPlus />
           </button>
         )}
+        <button className="pane-header-btn refresh-btn" onClick={(e) => { e.stopPropagation(); onRefresh() }} title="Reset terminal">
+          <IconRefresh />
+        </button>
         <button className="pane-header-btn close-btn" onClick={(e) => { e.stopPropagation(); onClose() }} title="Close pane">
           <IconClose />
         </button>

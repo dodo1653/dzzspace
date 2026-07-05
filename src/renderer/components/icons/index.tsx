@@ -82,3 +82,10 @@ export const IconCheck: React.FC<IconProps> = ({ className, size }) => (
     <path d="M2.5 7.5L5.5 10.5 11.5 3.5" />
   </S>
 )
+
+export const IconRefresh: React.FC<IconProps> = ({ className, size }) => (
+  <S className={className} size={size}>
+    <path d="M10.5 4A4.5 4.5 0 003 6.5M3.5 10A4.5 4.5 0 0011 7.5" />
+    <path d="M10.5 1.5V4H8M3.5 12.5V10H6" />
+  </S>
+)

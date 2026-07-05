@@ -173,8 +173,17 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
     let resizeTimer: ReturnType<typeof setTimeout> | null = null
     let optimizeTimer: ReturnType<typeof setTimeout> | null = null
 
+    const hasValidDimensions = (): boolean => {
+      const rect = containerRef.current?.getBoundingClientRect()
+      return !!rect && rect.width > 0 && rect.height > 0
+    }
+
     const doFit = (retries = 0) => {
       if (!mountedRef.current || retries > 12) return
+      if (!hasValidDimensions()) {
+        requestAnimationFrame(() => doFit(retries + 1))
+        return
+      }
       requestAnimationFrame(() => {
         try {
           fitAddon.fit()
@@ -193,6 +202,7 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
     doFit()
 
     const debouncedFit = () => {
+      if (!hasValidDimensions()) return
       try {
         fitAddon.fit()
         const dims = fitAddon.proposeDimensions()
@@ -207,8 +217,7 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
     const resizeObserver = new ResizeObserver(() => {
       if (resizeTimer !== null) clearTimeout(resizeTimer)
       resizeTimer = setTimeout(() => {
-        const rect = containerRef.current?.getBoundingClientRect()
-        if (!rect || rect.width === 0 || rect.height === 0) return
+        if (!hasValidDimensions()) return
         debouncedFit()
       }, 80)
     })
@@ -259,6 +268,8 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
     const fitAddon = fitAddonRef.current
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
+        const rect = containerRef.current?.getBoundingClientRect()
+        if (!rect || rect.width === 0 || rect.height === 0) return
         try {
           fitAddon.fit()
           const dims = fitAddon.proposeDimensions()
@@ -273,6 +284,8 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
 
   useEffect(() => {
     const handleResize = () => {
+      const rect = containerRef.current?.getBoundingClientRect()
+      if (!rect || rect.width === 0 || rect.height === 0) return
       PremiumRenderer.resetSharedSize()
       if (fitAddonRef.current && termRef.current && rendererRef.current) {
         try {

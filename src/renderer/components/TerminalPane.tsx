@@ -69,6 +69,14 @@ const TerminalPane: React.FC<TerminalPaneProps> = ({ pane, paneIndex, isActive, 
   }, [pane.id, setActivePane])
 
   const onTerminalDataRef = useMemo(() => () => {}, [])
+  const [resetKey, setResetKey] = useState(0)
+
+  const handleReset = useCallback(() => {
+    if (pane.terminalId) {
+      window.dzz.pty.destroy(pane.terminalId)
+    }
+    setResetKey((k) => k + 1)
+  }, [pane.terminalId])
 
   return (
     <div
@@ -84,11 +92,13 @@ const TerminalPane: React.FC<TerminalPaneProps> = ({ pane, paneIndex, isActive, 
         onAddPane={handleAddPane}
         onClose={handleClose}
         onSelect={handleSelect}
+        onRefresh={handleReset}
       />
       <div className="pane-body">
         <TerminalInstance
+          key={resetKey}
           paneId={pane.id}
-          terminalId={pane.terminalId}
+          terminalId={null}
           workspaceCwd={workspaceCwd}
           onTerminalReady={handleTerminalReady}
           onTerminalData={onTerminalDataRef}
