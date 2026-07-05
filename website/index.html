@@ -325,52 +325,163 @@
     }
 
     /* ---- PREVIEW ---- */
-    .preview-section { padding: 100px 0; }
-    .preview-section h2 {
+    .preview-section {
+      padding: 100px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .preview-section::before {
+      content: '';
+      position: absolute;
+      top: -200px; left: 50%; transform: translateX(-50%);
+      width: 600px; height: 600px;
+      background: radial-gradient(ellipse, rgba(212,163,115,0.03) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .preview-header { text-align: center; margin-bottom: 56px; position: relative; z-index: 1; }
+    .preview-header h2 {
       font-family: 'Press Start 2P', monospace;
       font-size: 22px; color: #f0f0f5;
-      text-align: center; margin-bottom: 12px;
-      letter-spacing: 1px;
+      letter-spacing: 1px; margin-bottom: 12px;
     }
-    .preview-section .sub {
-      text-align: center; color: #777; font-size: 14px;
-      margin-bottom: 56px; font-weight: 400;
+    .preview-header .sub {
+      color: #777; font-size: 14px;
+      font-weight: 400; max-width: 480px; margin: 0 auto;
     }
-    .preview-frame {
-      position: relative;
-      max-width: 860px;
+    .showcase-wrap {
+      max-width: 900px;
       margin: 0 auto;
-      border-radius: 12px;
+      position: relative;
+      z-index: 1;
+    }
+    .showcase-frame {
+      position: relative;
+      border-radius: 10px;
       overflow: hidden;
-      border: 1.5px solid rgba(212,163,115,0.08);
+      border: 1px solid rgba(212,163,115,0.08);
       background: #06060a;
+      transition: border-color 0.5s, box-shadow 0.5s;
+      animation: breathe 5s ease-in-out infinite;
       box-shadow:
         0 24px 64px rgba(0,0,0,0.5),
-        0 0 0 1px rgba(212,163,115,0.02),
-        0 0 60px rgba(212,163,115,0.015);
-      transition: border-color 0.4s, box-shadow 0.4s;
+        0 0 0 1px rgba(212,163,115,0.04),
+        0 0 40px rgba(212,163,115,0.04);
     }
-    .preview-frame:hover {
-      border-color: rgba(212,163,115,0.18);
+    @keyframes breathe {
+      0%, 100% {
+        box-shadow:
+          0 24px 64px rgba(0,0,0,0.5),
+          0 0 0 1px rgba(212,163,115,0.04),
+          0 0 40px rgba(212,163,115,0.04),
+          0 0 0 0 rgba(212,163,115,0);
+      }
+      50% {
+        box-shadow:
+          0 28px 72px rgba(0,0,0,0.55),
+          0 0 0 1px rgba(212,163,115,0.08),
+          0 0 60px rgba(212,163,115,0.06),
+          0 0 120px 20px rgba(212,163,115,0.04);
+      }
+    }
+    .showcase-frame::before {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: 10px;
+      background: linear-gradient(180deg, rgba(212,163,115,0.04) 0%, transparent 30%, rgba(0,0,0,0.15) 85%, rgba(0,0,0,0.3) 100%);
+      pointer-events: none;
+      z-index: 2;
+      opacity: 0.6;
+      transition: opacity 0.8s;
+    }
+    .showcase-frame:hover::before { opacity: 1; }
+    .showcase-frame::after {
+      content: '';
+      position: absolute;
+      top: -50%; left: -20%;
+      width: 140%; height: 80%;
+      background: radial-gradient(ellipse, rgba(255,255,255,0.02) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.3;
+      transition: opacity 0.8s;
+    }
+    .showcase-frame:hover {
+      border-color: rgba(212,163,115,0.2);
+      animation-play-state: paused;
       box-shadow:
         0 32px 80px rgba(0,0,0,0.55),
-        0 0 0 1px rgba(212,163,115,0.04),
-        0 0 80px rgba(212,163,115,0.025);
+        0 0 0 1px rgba(212,163,115,0.1),
+        0 0 60px rgba(212,163,115,0.08),
+        0 0 120px rgba(212,163,115,0.04);
     }
-    .preview-frame img {
+    .showcase-frame img {
       display: block;
       width: 100%;
       height: auto;
-    }
-    .preview-frame::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 12px;
-      background: linear-gradient(180deg, rgba(212,163,115,0.03) 0%, transparent 30%);
-      pointer-events: none;
+      transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
       z-index: 1;
     }
+    .showcase-frame:hover img {
+      transform: scale(1.012);
+    }
+    .showcase-frame .corner-tl,
+    .showcase-frame .corner-tr,
+    .showcase-frame .corner-bl,
+    .showcase-frame .corner-br {
+      position: absolute;
+      width: 22px; height: 22px;
+      pointer-events: none;
+      z-index: 3;
+      opacity: 0;
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .showcase-frame:hover .corner-tl,
+    .showcase-frame:hover .corner-tr,
+    .showcase-frame:hover .corner-bl,
+    .showcase-frame:hover .corner-br { opacity: 1; }
+    .corner-tl { top: 12px; left: 12px; border-top: 1.5px solid rgba(212,163,115,0.2); border-left: 1.5px solid rgba(212,163,115,0.2); }
+    .corner-tr { top: 12px; right: 12px; border-top: 1.5px solid rgba(212,163,115,0.2); border-right: 1.5px solid rgba(212,163,115,0.2); }
+    .corner-bl { bottom: 12px; left: 12px; border-bottom: 1.5px solid rgba(212,163,115,0.2); border-left: 1.5px solid rgba(212,163,115,0.2); }
+    .corner-br { bottom: 12px; right: 12px; border-bottom: 1.5px solid rgba(212,163,115,0.2); border-right: 1.5px solid rgba(212,163,115,0.2); }
+    .showcase-frame .showcase-label {
+      position: absolute;
+      bottom: 20px; left: 50%; transform: translateX(-50%);
+      z-index: 4;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: rgba(255,255,255,0.25);
+      letter-spacing: 0.5px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(8,8,14,0.6);
+      padding: 10px 20px;
+      border-radius: 4px;
+      border: 1px solid rgba(212,163,115,0.04);
+      backdrop-filter: blur(8px);
+    }
+    .showcase-frame:hover .showcase-label {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    .showcase-frame .showcase-label .label-dot {
+      width: 5px; height: 5px;
+      background: #d4a373;
+      display: inline-block;
+    }
+    .showcase-glow {
+      position: absolute;
+      top: -20%; left: -5%;
+      width: 110%; height: 70%;
+      background: radial-gradient(ellipse, rgba(212,163,115,0.04) 0%, rgba(212,163,115,0.01) 40%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0;
+      transition: opacity 0.8s;
+    }
+    .showcase-frame:hover .showcase-glow { opacity: 1; }
 
     /* ---- INSTALL ---- */
     .install { padding: 120px 0; }
@@ -402,17 +513,76 @@
       transform: translateY(-2px);
     }
     .install-card .icon-wrap {
-      width: 48px; height: 48px; margin: 0 auto 20px;
+      width: 72px; height: 72px; margin: 0 auto 24px;
       display: flex; align-items: center; justify-content: center;
-      border: 1px solid rgba(255,255,255,0.03);
-      background: rgba(255,255,255,0.008);
-      transition: border-color 0.4s, background 0.4s;
+      border: none;
+      background: none;
+      position: relative;
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      animation: iconFloat 4s ease-in-out infinite;
+    }
+    @keyframes iconFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-4px); }
+    }
+    .install-card .icon-wrap::before {
+      content: '';
+      position: absolute;
+      inset: -24px;
+      background: radial-gradient(ellipse, rgba(212,163,115,0.2) 0%, rgba(212,163,115,0.05) 30%, transparent 60%);
+      pointer-events: none;
+      opacity: 0.8;
+      animation: glowPulse 4s ease-in-out infinite;
+    }
+    @keyframes glowPulse {
+      0%, 100% { opacity: 0.5; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.1); }
+    }
+    .install-card .icon-wrap::after {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 10px;
+      border: 1px solid rgba(212,163,115,0.08);
+      background: radial-gradient(ellipse at center, rgba(212,163,115,0.06) 0%, transparent 50%);
+      pointer-events: none;
+      opacity: 1;
     }
     .install-card:hover .icon-wrap {
-      border-color: rgba(212,163,115,0.1);
-      background: rgba(212,163,115,0.02);
+      transform: translateY(-3px);
+      animation-play-state: paused;
     }
-    .install-card .icon-wrap svg { width: 22px; height: 22px; stroke: #d4a373; fill: none; stroke-width: 1.5; stroke-linecap: square; }
+    .install-card:hover .icon-wrap::before {
+      opacity: 1;
+      inset: -32px;
+      background: radial-gradient(ellipse, rgba(212,163,115,0.3) 0%, rgba(212,163,115,0.08) 30%, transparent 60%);
+      animation-play-state: paused;
+    }
+    .install-card:hover .icon-wrap::after {
+      opacity: 1;
+      border-color: rgba(212,163,115,0.15);
+    }
+    .install-card .icon-wrap img {
+      width: 56px; height: 56px;
+      object-fit: contain;
+      display: block;
+      border-radius: 8px;
+      position: relative;
+      z-index: 1;
+      box-shadow:
+        0 8px 32px rgba(0,0,0,0.5),
+        0 0 0 1px rgba(212,163,115,0.08),
+        0 0 20px rgba(212,163,115,0.04);
+      transition: box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .install-card:hover .icon-wrap img {
+      box-shadow:
+        0 16px 48px rgba(0,0,0,0.6),
+        0 0 0 1px rgba(212,163,115,0.2),
+        0 0 40px rgba(212,163,115,0.12),
+        0 0 80px rgba(212,163,115,0.04);
+      transform: scale(1.06);
+    }
     .install-card .version-badge {
       display: inline-block;
       font-family: 'Press Start 2P', monospace;
@@ -619,11 +789,22 @@
   </div>
 </section>
 
-<section id="preview" class="preview-section container">
-  <h2 class="anim-fade-up">See it in action</h2>
-  <p class="sub anim-fade-up" style="transition-delay: 0.08s">A multi-terminal workspace session with PowerShell panes, workspace sidebar, and premium rendering.</p>
-  <div class="preview-frame reveal-card" data-delay="0.16">
-    <img src="website image.png" alt="dzzspace terminal workspace screenshot" loading="lazy" />
+<section id="preview" class="preview-section">
+  <div class="preview-header container">
+    <div class="section-label anim-fade-up" style="transition-delay: 0s">Showcase</div>
+    <h2 class="anim-fade-up" style="transition-delay: 0.08s">See it in action</h2>
+    <p class="sub anim-fade-up" style="transition-delay: 0.16s">A multi-terminal workspace session with PowerShell panes, workspace sidebar, and premium rendering.</p>
+  </div>
+  <div class="showcase-wrap container">
+    <div class="showcase-frame reveal-card" data-delay="0.1">
+      <div class="showcase-glow"></div>
+      <div class="corner-tl"></div>
+      <div class="corner-tr"></div>
+      <div class="corner-bl"></div>
+      <div class="corner-br"></div>
+      <img src="showcase2.png" alt="dzzspace terminal workspace with grid layout" loading="lazy" />
+      <div class="showcase-label"><span class="label-dot"></span> Grid layout with multiple terminals</div>
+    </div>
   </div>
 </section>
 
@@ -637,7 +818,7 @@
   <div class="install-card-wrap reveal-card" data-delay="0.1">
     <a href="https://github.com/dodo1653/dzzspace/releases/download/v1.1.0/dzzspace.Setup.1.1.0.exe" class="install-card">
       <div class="icon-wrap">
-        <svg viewBox="0 0 16 16"><rect x="1" y="2" width="14" height="12" rx="1"/><path d="M8 1v4M6 3l2 2 2-2"/></svg>
+        <img src="official-logo.png" alt="dzzspace" />
       </div>
       <div class="version-badge">v1.1.0</div>
       <h4>Windows</h4>
