@@ -144,8 +144,6 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
     const currentPanes = [...ws.panes]
     let newPanes: PaneConfig[]
 
-    const resetPane = (p: PaneConfig) => ({ ...p, terminalId: null, status: 'starting' as const, exitCode: null })
-
     if (targetCount > currentPanes.length) {
       const addCount = targetCount - currentPanes.length
       const additional = Array.from({ length: addCount }, (_, i) => ({
@@ -156,15 +154,16 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
         status: 'starting' as const,
         exitCode: null
       }))
-      newPanes = [...currentPanes.map(resetPane), ...additional]
+      newPanes = [...currentPanes, ...additional]
     } else {
-      newPanes = currentPanes.slice(0, targetCount).map(resetPane)
+      newPanes = currentPanes.slice(0, targetCount)
     }
 
     set((s) => ({
       workspaces: s.workspaces.map((w) =>
         w.id === wsId ? { ...w, panes: newPanes, layout } : w
-      )
+      ),
+      workspaceSwitchCount: s.workspaceSwitchCount + 1
     }))
   },
 

@@ -103,6 +103,13 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
     term.loadAddon(fitAddon)
     term.loadAddon(new WebLinksAddon())
 
+    term.attachCustomKeyEventHandler((e) => {
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'v' || e.key === 'V')) {
+        return false
+      }
+      return true
+    })
+
     termRef.current = term
     fitAddonRef.current = fitAddon
 
@@ -141,6 +148,7 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
     }
 
     const cleanup = window.dzz.pty.onData(id, (data) => {
+      if (!mountedRef.current || !termRef.current) return
       term.write(data)
 
       if (rendererRef.current) {
@@ -154,6 +162,7 @@ const TerminalInstance: React.FC<TerminalInstanceProps> = ({
     })
 
     const exitCleanup = window.dzz.pty.onExit(id, (exitCode) => {
+      if (!mountedRef.current) return
       onExit(exitCode)
     })
 
