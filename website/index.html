@@ -3,19 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>dzzspace — multi-terminal workspace</title>
+  <title>dzzspace — premium multi-terminal workspace</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=JetBrains+Mono:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
-      background: #0c0c12;
+      background: #08080e;
       color: #c8c8d0;
       font-family: 'Inter', system-ui, sans-serif;
       font-weight: 400;
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
       overflow-x: hidden;
     }
     ::selection { background: rgba(212,163,115,0.3); color: #f0f0f5; }
@@ -34,397 +35,576 @@
 
     .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 
+    /* ---- ANIMATIONS ---- */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeUpScale {
+      from { opacity: 0; transform: translateY(40px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.2; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.05); }
+    }
+    @keyframes lineGrow {
+      from { width: 0; }
+      to { width: 60px; }
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+
+    .anim-fade-up {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .anim-fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .anim-fade-up-scale {
+      opacity: 0;
+      transform: translateY(40px) scale(0.96);
+      transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .anim-fade-up-scale.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
     /* ---- NAV ---- */
     nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 14px 0;
+      background: rgba(8,8,14,0.7);
+      backdrop-filter: blur(20px) saturate(1.3);
+      -webkit-backdrop-filter: blur(20px) saturate(1.3);
+      border-bottom: 1px solid rgba(255,255,255,0.02);
+    }
+    nav .container {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
     }
     .nav-logo {
-      display: flex; align-items: center; gap: 12px;
+      display: flex; align-items: center; gap: 14px;
       font-family: 'Press Start 2P', monospace;
-      font-size: 14px; color: #e0e0e8;
+      font-size: 13px; color: #e0e0e8;
       text-decoration: none; letter-spacing: 1px;
+      transition: opacity 0.25s;
     }
-    .nav-logo svg { width: 28px; height: 28px; }
-    .nav-links { display: flex; gap: 28px; align-items: center; }
+    .nav-logo:hover { opacity: 0.8; }
+    .nav-logo img {
+      width: 28px; height: 28px;
+      border-radius: 4px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+    .nav-links { display: flex; gap: 32px; align-items: center; }
     .nav-links a {
-      font-size: 13px; font-weight: 500; color: #888;
-      text-decoration: none; transition: color 0.2s;
-      letter-spacing: 0.02em;
+      font-size: 12px; font-weight: 500; color: #777;
+      text-decoration: none; transition: color 0.3s;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      position: relative; padding: 4px 0;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute; bottom: -2px; left: 0; right: 0;
+      height: 1px; background: #d4a373;
+      transform: scaleX(0); transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      transform-origin: left;
     }
     .nav-links a:hover { color: #d4a373; }
+    .nav-links a:hover::after { transform: scaleX(1); }
     .nav-cta {
-      padding: 8px 20px; border-radius: 4px;
-      background: #d4a373; color: #0c0c12 !important;
-      font-weight: 600; font-size: 12px !important;
-      transition: opacity 0.2s; letter-spacing: 0.04em;
+      padding: 10px 24px !important; border-radius: 3px;
+      background: #d4a373; color: #08080e !important;
+      font-weight: 600 !important; font-size: 10px !important;
+      letter-spacing: 0.1em !important; text-transform: uppercase;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
     }
-    .nav-cta:hover { opacity: 0.85; color: #0c0c12 !important; }
+    .nav-cta::after { display: none !important; }
+    .nav-cta:hover {
+      opacity: 0.85;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px rgba(212,163,115,0.15);
+      color: #08080e !important;
+    }
 
     /* ---- HERO ---- */
     .hero {
-      padding: 80px 0 60px; text-align: center;
+      padding: 160px 0 80px;
+      text-align: center;
       position: relative;
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
     }
-    .hero::before {
-      content: ''; position: absolute; top: -120px; left: 50%;
-      transform: translateX(-50%);
-      width: 600px; height: 600px;
-      background: radial-gradient(ellipse, rgba(212,163,115,0.04) 0%, transparent 70%);
+    .hero-bg-glow {
+      position: absolute;
+      top: -300px; left: 50%; transform: translateX(-50%);
+      width: 900px; height: 900px;
+      background: radial-gradient(ellipse, rgba(212,163,115,0.05) 0%, rgba(212,163,115,0.015) 30%, transparent 70%);
+      pointer-events: none;
+      animation: pulseGlow 6s ease-in-out infinite;
+    }
+    .hero-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.006) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.006) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: radial-gradient(ellipse at 50% 40%, black 25%, transparent 70%);
+      -webkit-mask-image: radial-gradient(ellipse at 50% 40%, black 25%, transparent 70%);
       pointer-events: none;
     }
-    .hero-logo {
-      display: inline-block; margin-bottom: 32px;
-      position: relative;
+    .hero-inner {
+      position: relative; z-index: 1;
+      animation: fadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
     }
-    .hero-logo svg { width: 80px; height: 80px; }
+    .hero-logo {
+      display: inline-block; margin-bottom: 36px;
+      position: relative;
+      animation: float 5s ease-in-out infinite;
+    }
+    .hero-logo::before {
+      content: '';
+      position: absolute; inset: -24px;
+      background: radial-gradient(ellipse, rgba(212,163,115,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-logo img {
+      width: 96px; height: 96px;
+      border-radius: 12px;
+      object-fit: contain;
+      display: block;
+      position: relative;
+      box-shadow:
+        0 0 0 1px rgba(212,163,115,0.08),
+        0 8px 32px rgba(0,0,0,0.3);
+    }
     .hero-tag {
       font-family: 'Press Start 2P', monospace;
-      font-size: 10px; letter-spacing: 3px;
-      color: #d4a373; margin-bottom: 20px;
+      font-size: 8px; letter-spacing: 5px;
+      color: #d4a373; margin-bottom: 24px;
+      text-transform: uppercase;
     }
     .hero h1 {
       font-family: 'Press Start 2P', monospace;
-      font-size: 48px; line-height: 1.15;
-      color: #f0f0f5; margin-bottom: 20px;
-      letter-spacing: 2px;
+      font-size: 56px; line-height: 1.1;
+      margin-bottom: 18px;
+      letter-spacing: 4px;
     }
-    .hero p {
+    .hero h1 span {
+      background: linear-gradient(135deg, #f0e6d0 0%, #d4a373 45%, #c8955a 70%, #b88a5a 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      background-size: 200% auto;
+      animation: shimmer 4s ease-in-out infinite;
+    }
+    .hero-sub {
       font-size: 16px; color: #888;
-      max-width: 600px; margin: 0 auto 32px;
-      font-weight: 400; line-height: 1.7;
+      max-width: 540px; margin: 0 auto 40px;
+      font-weight: 400; line-height: 1.8;
     }
-    .hero-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .hero-sub strong { color: #b0b0b8; font-weight: 500; }
+    .hero-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
     .btn {
       display: inline-flex; align-items: center; gap: 8px;
-      padding: 13px 32px; border-radius: 4px;
+      padding: 15px 36px; border-radius: 3px;
       font-family: 'Inter', sans-serif;
-      font-size: 13px; font-weight: 600;
+      font-size: 12px; font-weight: 600;
       text-decoration: none; cursor: pointer;
-      transition: all 0.2s; letter-spacing: 0.03em;
-      border: none;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      letter-spacing: 0.08em; text-transform: uppercase;
+      border: none; position: relative; overflow: hidden;
     }
-    .btn-primary { background: #d4a373; color: #0c0c12; }
-    .btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
+    .btn-primary {
+      background: #d4a373; color: #08080e;
+    }
+    .btn-primary:hover {
+      opacity: 0.9; transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(212,163,115,0.2);
+    }
     .btn-secondary {
       background: transparent; color: #d4a373;
-      border: 1px solid rgba(212,163,115,0.25);
+      border: 1px solid rgba(212,163,115,0.2);
     }
     .btn-secondary:hover {
       background: rgba(212,163,115,0.06);
-      border-color: rgba(212,163,115,0.5);
-    }
-    .hero-platforms {
-      margin-top: 20px;
-      font-size: 11px; color: #555;
-      letter-spacing: 0.1em; text-transform: uppercase;
+      border-color: rgba(212,163,115,0.4);
+      transform: translateY(-2px);
     }
 
     /* ---- DIVIDER ---- */
     .divider {
-      width: 60px; height: 2px; margin: 0 auto;
-      background: linear-gradient(90deg, transparent, rgba(212,163,115,0.3), transparent);
+      width: 100%; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(212,163,115,0.05) 20%, rgba(212,163,115,0.07) 50%, rgba(212,163,115,0.05) 80%, transparent);
     }
 
     /* ---- FEATURES ---- */
-    .features { padding: 100px 0; }
+    .features { padding: 120px 0; }
+    .features-header { text-align: center; margin-bottom: 72px; }
+    .section-label {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 8px; letter-spacing: 5px;
+      color: #d4a373; margin-bottom: 16px;
+      text-transform: uppercase;
+    }
+    .section-line {
+      width: 0; height: 2px;
+      margin: 0 auto 20px;
+      background: linear-gradient(90deg, transparent, rgba(212,163,115,0.3), transparent);
+      transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .section-line.visible { width: 60px; }
+    .features-header h2 {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 22px; color: #f0f0f5;
+      letter-spacing: 1px;
+    }
+    .features-header p {
+      font-size: 14px; color: #777;
+      max-width: 400px; margin: 14px auto 0;
+    }
     .features-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 2px; margin-top: 60px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.04);
+      gap: 1px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.025);
     }
     .feature-card {
-      background: #0c0c12;
-      padding: 48px 40px;
+      background: #08080e;
+      padding: 52px 44px;
       position: relative;
+      transition: background 0.5s;
     }
     .feature-card::before {
       content: '';
       position: absolute; top: 0; left: 0; right: 0;
       height: 2px;
-      background: linear-gradient(90deg, transparent, rgba(212,163,115,0.08), transparent);
-      opacity: 0; transition: opacity 0.3s;
+      background: linear-gradient(90deg, transparent, rgba(212,163,115,0.05), transparent);
+      opacity: 0; transition: opacity 0.5s;
     }
+    .feature-card:hover { background: rgba(255,255,255,0.008); }
     .feature-card:hover::before { opacity: 1; }
     .feature-icon {
-      width: 40px; height: 40px; margin-bottom: 18px;
+      width: 44px; height: 44px; margin-bottom: 20px;
       display: flex; align-items: center; justify-content: center;
-      border: 1px solid rgba(255,255,255,0.06);
-      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.03);
+      background: rgba(255,255,255,0.008);
+      transition: border-color 0.4s, background 0.4s, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .feature-card:hover .feature-icon {
+      border-color: rgba(212,163,115,0.1);
+      background: rgba(212,163,115,0.02);
+      transform: translateY(-2px);
     }
     .feature-icon svg { width: 20px; height: 20px; stroke: #d4a373; fill: none; stroke-width: 1.5; stroke-linecap: square; }
     .feature-card h3 {
       font-family: 'Press Start 2P', monospace;
-      font-size: 13px; color: #e0e0e8; margin-bottom: 12px;
+      font-size: 12px; color: #e0e0e8; margin-bottom: 14px;
       line-height: 1.5;
     }
     .feature-card p {
-      font-size: 13px; color: #777; line-height: 1.8;
+      font-size: 13px; color: #777; line-height: 1.85;
     }
 
     /* ---- PREVIEW ---- */
-    .preview-section { padding: 80px 0; }
+    .preview-section { padding: 100px 0; }
     .preview-section h2 {
       font-family: 'Press Start 2P', monospace;
-      font-size: 24px; color: #f0f0f5;
+      font-size: 22px; color: #f0f0f5;
       text-align: center; margin-bottom: 12px;
       letter-spacing: 1px;
     }
     .preview-section .sub {
       text-align: center; color: #777; font-size: 14px;
-      margin-bottom: 48px;
+      margin-bottom: 56px; font-weight: 400;
     }
-
-    /* ---- INSTALL ---- */
-    .install { padding: 100px 0; }
-    .install h2 {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 24px; color: #f0f0f5;
-      text-align: center; margin-bottom: 12px;
-      letter-spacing: 1px;
-    }
-    .install .sub {
-      text-align: center; color: #777; font-size: 14px;
-      margin-bottom: 48px;
-    }
-    .install-grid {
-      display: grid; grid-template-columns: 1fr 1fr 1fr;
-      gap: 2px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.04);
-      margin-bottom: 48px;
-    }
-    .install-card {
-      background: #0c0c12; padding: 36px 32px;
-      text-align: center;
-    }
-    .install-card h4 {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 11px; color: #d4a373; margin-bottom: 8px;
-    }
-    .install-card .icon-wrap {
-      width: 32px; height: 32px; margin: 0 auto 14px;
-      display: flex; align-items: center; justify-content: center;
-      border: 1px solid rgba(255,255,255,0.06);
-    }
-    .install-card .icon-wrap svg { width: 16px; height: 16px; stroke: #d4a373; fill: none; stroke-width: 1.5; stroke-linecap: square; }
-    .install-card p { font-size: 12px; color: #777; line-height: 1.6; }
-    .install-card:hover { background: rgba(255,255,255,0.015); }
-    .install-card:hover h4 { color: #e0c090; }
-    .code-block {
-      background: #08080e;
-      border: 1px solid rgba(255,255,255,0.04);
-      border-radius: 4px; overflow: hidden;
-      max-width: 680px; margin: 0 auto;
-    }
-    .code-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 10px 16px;
-      background: rgba(255,255,255,0.02);
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      font-size: 11px; color: #555;
-      font-family: 'Inter', sans-serif;
-    }
-    .code-header .copy-btn {
-      padding: 4px 12px; border-radius: 3px;
-      font-size: 10px; color: #777;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.04);
-      cursor: pointer; transition: all 0.15s;
-      font-family: 'Inter', sans-serif;
-    }
-    .code-header .copy-btn:hover {
-      background: rgba(212,163,115,0.1);
-      border-color: rgba(212,163,115,0.2);
-      color: #d4a373;
-    }
-    .code-body {
-      padding: 18px 20px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 13px; line-height: 1.8;
-      color: #b0b0b8; overflow-x: auto;
-    }
-    .code-body .comment { color: #555; }
-    .code-body .keyword { color: #6d8ae8; }
-    .code-body .string { color: #4cc2a0; }
-
-    /* ---- PREVIEW IMAGE ---- */
     .preview-frame {
       position: relative;
       max-width: 860px;
       margin: 0 auto;
-      border-radius: 16px;
+      border-radius: 12px;
       overflow: hidden;
-      border: 3px solid rgba(212, 163, 115, 0.15);
-      background: #08080c;
-      box-shadow: 0 24px 64px rgba(0,0,0,0.4), 0 0 0 1px rgba(212,163,115,0.04);
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      border: 1.5px solid rgba(212,163,115,0.08);
+      background: #06060a;
+      box-shadow:
+        0 24px 64px rgba(0,0,0,0.5),
+        0 0 0 1px rgba(212,163,115,0.02),
+        0 0 60px rgba(212,163,115,0.015);
+      transition: border-color 0.4s, box-shadow 0.4s;
     }
     .preview-frame:hover {
-      border-color: rgba(212, 163, 115, 0.3);
-      box-shadow: 0 32px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(212,163,115,0.08);
+      border-color: rgba(212,163,115,0.18);
+      box-shadow:
+        0 32px 80px rgba(0,0,0,0.55),
+        0 0 0 1px rgba(212,163,115,0.04),
+        0 0 80px rgba(212,163,115,0.025);
     }
     .preview-frame img {
       display: block;
       width: 100%;
       height: auto;
-      border-radius: 13px;
     }
     .preview-frame::after {
       content: '';
       position: absolute;
-      inset: -3px;
-      border-radius: 19px;
-      background: radial-gradient(ellipse at 50% 0%, rgba(212,163,115,0.08) 0%, transparent 70%);
+      inset: 0;
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(212,163,115,0.03) 0%, transparent 30%);
       pointer-events: none;
       z-index: 1;
     }
-    .preview-badge {
-      position: absolute;
-      top: 16px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 2;
+
+    /* ---- INSTALL ---- */
+    .install { padding: 120px 0; }
+    .install-header { text-align: center; margin-bottom: 56px; }
+    .install-header h2 {
       font-family: 'Press Start 2P', monospace;
-      font-size: 8px;
-      letter-spacing: 2px;
-      color: rgba(212,163,115,0.3);
-      background: rgba(8,8,12,0.7);
-      padding: 6px 14px;
-      border-radius: 6px;
+      font-size: 22px; color: #f0f0f5;
+      letter-spacing: 1px; margin-bottom: 12px;
+    }
+    .install-header p {
+      font-size: 14px; color: #777;
+      max-width: 400px; margin: 0 auto;
+    }
+    .install-card-wrap {
+      max-width: 420px; margin: 0 auto;
+    }
+    .install-card {
+      background: #08080e;
+      padding: 48px 40px;
+      text-align: center;
+      text-decoration: none; display: block;
+      border: 1px solid rgba(255,255,255,0.025);
+      transition: border-color 0.4s, background 0.4s, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+    .install-card:hover {
+      background: rgba(255,255,255,0.008);
+      border-color: rgba(212,163,115,0.12);
+      transform: translateY(-2px);
+    }
+    .install-card .icon-wrap {
+      width: 48px; height: 48px; margin: 0 auto 20px;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid rgba(255,255,255,0.03);
+      background: rgba(255,255,255,0.008);
+      transition: border-color 0.4s, background 0.4s;
+    }
+    .install-card:hover .icon-wrap {
+      border-color: rgba(212,163,115,0.1);
+      background: rgba(212,163,115,0.02);
+    }
+    .install-card .icon-wrap svg { width: 22px; height: 22px; stroke: #d4a373; fill: none; stroke-width: 1.5; stroke-linecap: square; }
+    .install-card .version-badge {
+      display: inline-block;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 8px; letter-spacing: 2px;
+      color: #d4a373;
       border: 1px solid rgba(212,163,115,0.08);
-      pointer-events: none;
-      text-transform: uppercase;
+      padding: 5px 12px; margin-bottom: 14px;
+    }
+    .install-card h4 {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 14px; color: #e0e0e8; margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+    .install-card p {
+      font-size: 13px; color: #777; line-height: 1.6;
+    }
+    .install-card .card-footer {
+      margin-top: 20px;
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 600; color: #d4a373;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      transition: gap 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .install-card:hover .card-footer { gap: 14px; }
+    .install-card .card-footer svg {
+      width: 14px; height: 14px; stroke: #d4a373; fill: none; stroke-width: 1.5;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .install-card:hover .card-footer svg { transform: translateY(2px); }
+
+    .terminal-cmd {
+      max-width: 520px; margin: 48px auto 0;
+      background: #06060a;
+      border: 1px solid rgba(255,255,255,0.02);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .terminal-cmd-header {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 16px;
+      background: rgba(255,255,255,0.012);
+      border-bottom: 1px solid rgba(255,255,255,0.02);
+    }
+    .terminal-cmd-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+    }
+    .terminal-cmd-dot:nth-child(1) { background: #e3567c; }
+    .terminal-cmd-dot:nth-child(2) { background: #d4a373; }
+    .terminal-cmd-dot:nth-child(3) { background: #4cc2a0; }
+    .terminal-cmd-content {
+      padding: 18px 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px; line-height: 1.7;
+      color: #999;
+    }
+    .terminal-cmd-content .prompt { color: #d4a373; }
+    .terminal-cmd-content .cmd { color: #c8c8d0; }
+    .terminal-cmd-content .cursor {
+      display: inline-block;
+      width: 7px; height: 14px;
+      background: #d4a373;
+      animation: pulseGlow 1.2s ease-in-out infinite;
+      vertical-align: text-bottom; margin-left: 3px;
     }
 
     /* ---- FOOTER ---- */
     footer {
-      padding: 48px 0; text-align: center;
-      border-top: 1px solid rgba(255,255,255,0.03);
+      padding: 56px 0 40px;
+      text-align: center;
+      border-top: 1px solid rgba(255,255,255,0.015);
     }
-    footer p { font-size: 12px; color: #444; }
-    footer a { color: #666; text-decoration: none; transition: color 0.2s; }
+    footer .footer-brand {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 9px; color: #555;
+      letter-spacing: 1px; margin-bottom: 20px;
+    }
+    footer .footer-brand img {
+      width: 18px; height: 18px;
+      vertical-align: middle;
+      margin-right: 8px;
+      border-radius: 3px;
+    }
+    footer .footer-links {
+      display: flex; gap: 28px; justify-content: center;
+      margin-bottom: 20px; flex-wrap: wrap;
+    }
+    footer .footer-links a {
+      font-size: 12px; color: #555; text-decoration: none;
+      transition: color 0.3s; letter-spacing: 0.04em;
+    }
+    footer .footer-links a:hover { color: #d4a373; }
+    footer p { font-size: 11px; color: #444; letter-spacing: 0.02em; }
+    footer a { color: #555; text-decoration: none; transition: color 0.3s; }
     footer a:hover { color: #d4a373; }
-    footer .footer-links { display: flex; gap: 24px; justify-content: center; margin-bottom: 16px; }
-    footer .footer-links a { font-size: 12px; }
 
     /* ---- RESPONSIVE ---- */
     @media (max-width: 768px) {
-      .hero h1 { font-size: 28px; }
+      .hero h1 { font-size: 30px; letter-spacing: 2px; }
+      .hero-logo img { width: 72px; height: 72px; }
+      .hero { padding: 120px 0 60px; min-height: auto; }
       .features-grid { grid-template-columns: 1fr; }
-      .install-grid { grid-template-columns: 1fr; }
       nav .nav-links a:not(.nav-cta) { display: none; }
-      .hero-logo svg { width: 56px; height: 56px; }
+      .features-header h2 { font-size: 16px; }
+      .preview-section h2 { font-size: 16px; }
+      .install-header h2 { font-size: 16px; }
+      .feature-card { padding: 36px 28px; }
+      .install-card { padding: 36px 28px; }
     }
-
-    .pixel-border {
-      position: relative;
-    }
-    .pixel-border::after {
-      content: ''; position: absolute; inset: 0;
-      border: 1px solid rgba(255,255,255,0.04);
-      pointer-events: none;
-    }
-
-    .section-label {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 9px; letter-spacing: 4px;
-      color: #d4a373; text-align: center; margin-bottom: 8px;
-      text-transform: uppercase;
+    @media (max-width: 480px) {
+      .hero h1 { font-size: 22px; letter-spacing: 1px; }
+      .hero-sub { font-size: 14px; }
+      .hero-actions { flex-direction: column; align-items: center; }
     }
   </style>
 </head>
 <body>
 <div class="scanlines"></div>
 
-<nav class="container">
-  <a href="#" class="nav-logo">
-    <svg viewBox="0 0 32 32" fill="none">
-      <rect x="1" y="1" width="30" height="30" rx="0" stroke="#d4a373" stroke-width="1.5"/>
-      <rect x="5" y="8" width="22" height="16" rx="0" fill="rgba(212,163,115,0.06)" stroke="#d4a373" stroke-width="0.75" stroke-dasharray="0"/>
-      <path d="M8 14h16M8 18h10M8 22h13" stroke="#d4a373" stroke-width="1.5" stroke-linecap="square"/>
-      <path d="M2 8h28" stroke="#d4a373" stroke-width="1.5"/>
-      <circle cx="6.5" cy="5.5" r="1" fill="#e3567c"/>
-      <circle cx="11" cy="5.5" r="1" fill="#d4a373"/>
-      <circle cx="15.5" cy="5.5" r="1" fill="#4cc2a0"/>
-    </svg>
-    dzzspace
-  </a>
-  <div class="nav-links">
-    <a href="#features">Features</a>
-    <a href="#preview">Preview</a>
-    <a href="#install">Install</a>
-    <a href="https://github.com/dodo1653/dzzspace" target="_blank">GitHub</a>
-    <a href="#install" class="nav-cta">Download</a>
+<nav>
+  <div class="container">
+    <a href="#" class="nav-logo">
+      <img src="official-logo.png" alt="dzzspace">
+      dzzspace
+    </a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#preview">Preview</a>
+      <a href="#install">Install</a>
+      <a href="https://github.com/dodo1653/dzzspace" target="_blank">GitHub</a>
+      <a href="#install" class="nav-cta">Download</a>
+    </div>
   </div>
 </nav>
 
-<section class="hero container">
-  <div class="hero-logo">
-    <svg viewBox="0 0 80 80" fill="none">
-      <rect x="2" y="2" width="76" height="76" rx="0" stroke="#d4a373" stroke-width="2"/>
-      <rect x="10" y="18" width="60" height="44" rx="0" fill="rgba(212,163,115,0.04)" stroke="#d4a373" stroke-width="1"/>
-      <path d="M16 30h48M16 38h30M16 46h40M16 54h25" stroke="#d4a373" stroke-width="1.5" stroke-linecap="square" opacity="0.6"/>
-      <path d="M2 18h76" stroke="#d4a373" stroke-width="2"/>
-      <circle cx="13" cy="10" r="2.5" fill="#e3567c"/>
-      <circle cx="24" cy="10" r="2.5" fill="#d4a373"/>
-      <circle cx="35" cy="10" r="2.5" fill="#4cc2a0"/>
-      <rect x="2" y="2" width="76" height="76" rx="0" fill="none" stroke="rgba(212,163,115,0.15)" stroke-width="1" stroke-dasharray="4 4"/>
-    </svg>
+<section class="hero">
+  <div class="hero-bg-glow"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-inner container">
+    <div class="hero-logo">
+      <img src="official-logo.png" alt="dzzspace">
+    </div>
+    <div class="hero-tag">Multi-Terminal Workspace</div>
+    <h1><span>dzzspace</span></h1>
+    <p class="hero-sub">A premium desktop workspace for developers who live in the terminal. <strong>Grid-based PowerShell terminals</strong> with workspace management and pixel-perfect rendering — built for speed.</p>
+    <div class="hero-actions">
+      <a href="#install" class="btn btn-primary">Get Started</a>
+      <a href="https://github.com/dodo1653/dzzspace" target="_blank" class="btn btn-secondary">View on GitHub</a>
+    </div>
   </div>
-  <div class="hero-tag">Multi-Terminal Workspace</div>
-  <h1>dzzspace</h1>
-  <p>A premium desktop workspace for developers who live in the terminal. Grid-based PowerShell terminals, workspace management, and pixel-perfect rendering — built for speed.</p>
-  <div class="hero-actions">
-    <a href="#install" class="btn btn-primary">Get Started</a>
-    <a href="https://github.com/dodo1653/dzzspace" target="_blank" class="btn btn-secondary">View on GitHub</a>
-  </div>
-  <div class="hero-platforms">Windows &middot; macOS &amp; Linux coming soon</div>
 </section>
 
 <div class="divider"></div>
 
 <section id="features" class="features container">
-  <div class="section-label">Features</div>
+  <div class="features-header anim-fade-up">
+    <div class="section-label">Features</div>
+    <div class="section-line" id="sectionLine"></div>
+    <h2>Built for the terminal</h2>
+    <p>Everything you need for a premium multi-terminal workflow.</p>
+  </div>
   <div class="features-grid">
-    <div class="feature-card">
+    <div class="feature-card anim-fade-up-scale" style="transition-delay: 0.05s">
       <div class="feature-icon">
         <svg viewBox="0 0 20 20"><rect x="2" y="2" width="16" height="16" rx="0"/><path d="M2 6h16M6 2v16"/></svg>
       </div>
       <h3>Grid-Based<br>Terminals</h3>
       <p>CSS grid layouts with presets from 1 to 9 panes. Split, resize, and rearrange terminals in a native-feeling grid that adapts to your workflow.</p>
     </div>
-    <div class="feature-card">
+    <div class="feature-card anim-fade-up-scale" style="transition-delay: 0.12s">
       <div class="feature-icon">
         <svg viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="0"/><path d="M3 8h14M8 3v14"/></svg>
       </div>
       <h3>Workspace<br>Manager</h3>
       <p>Group terminals by project. Switch between workspaces with one click — each keeps its own grid layout, panes, and running terminal sessions.</p>
     </div>
-    <div class="feature-card">
+    <div class="feature-card anim-fade-up-scale" style="transition-delay: 0.19s">
       <div class="feature-icon">
         <svg viewBox="0 0 20 20"><path d="M4 4h12v12H4zM7 10h6M10 7v6" stroke-linecap="square"/></svg>
       </div>
       <h3>Premium Terminal<br>Rendering</h3>
       <p>Glyph-aware canvas metrics, adaptive typography with JetBrains Mono, and xterm.js with canvas renderer. No DOM renderer — native terminal feel.</p>
     </div>
-    <div class="feature-card">
+    <div class="feature-card anim-fade-up-scale" style="transition-delay: 0.26s">
       <div class="feature-icon">
         <svg viewBox="0 0 20 20"><rect x="2" y="4" width="16" height="12" rx="0"/><path d="M6 4v12M2 10h16"/></svg>
       </div>
       <h3>Keyboard<br>First</h3>
       <p>Ctrl+Shift+N for new terminal, Alt+1-9 to switch panes, Ctrl+B toggle sidebar, Ctrl+D close pane — everything at your fingertips.</p>
     </div>
-    <div class="feature-card">
+    <div class="feature-card anim-fade-up-scale" style="transition-delay: 0.33s">
       <div class="feature-icon">
         <svg viewBox="0 0 20 20"><rect x="2" y="2" width="16" height="16" rx="0"/><circle cx="10" cy="10" r="3"/><path d="M10 2v3M10 15v3M2 10h3M15 10h3"/></svg>
       </div>
       <h3>Per-Pane<br>Profiles</h3>
       <p>CLI-aware profile detection. Each pane gets a unique nickname and color. Swap layouts, rename panes, and organize your terminal grid.</p>
     </div>
-    <div class="feature-card">
+    <div class="feature-card anim-fade-up-scale" style="transition-delay: 0.4s">
       <div class="feature-icon">
         <svg viewBox="0 0 20 20"><path d="M2 6h16M2 14h16M10 2v16" stroke-linecap="square"/><rect x="2" y="2" width="16" height="16" rx="0"/></svg>
       </div>
@@ -435,48 +615,62 @@
 </section>
 
 <section id="preview" class="preview-section container">
-  <h2>See it in action</h2>
-  <p class="sub">A multi-terminal workspace session with PowerShell panes, workspace sidebar, and premium rendering.</p>
-  <div class="preview-frame">
-    <div class="preview-badge">Live session</div>
+  <h2 class="anim-fade-up">See it in action</h2>
+  <p class="sub anim-fade-up" style="transition-delay: 0.08s">A multi-terminal workspace session with PowerShell panes, workspace sidebar, and premium rendering.</p>
+  <div class="preview-frame anim-fade-up-scale" style="transition-delay: 0.16s">
     <img src="website image.png" alt="dzzspace terminal workspace screenshot" loading="lazy" />
   </div>
 </section>
 
 <section id="install" class="install container">
-  <div class="section-label">Get Started</div>
-  <h2>Install dzzspace</h2>
-  <p class="sub">Available for Windows. macOS and Linux coming soon.</p>
+  <div class="install-header anim-fade-up">
+    <div class="section-label">Get Started</div>
+    <h2>Install dzzspace</h2>
+    <p>Available for Windows. macOS and Linux coming soon.</p>
+  </div>
 
-    <div class="install-grid" style="grid-template-columns: 1fr 1fr;">
-      <a href="https://github.com/dodo1653/dzzspace/releases/download/v1.1.0/dzzspace.Setup.1.1.0.exe" class="install-card" style="text-decoration:none">
-        <div class="icon-wrap">
-          <svg viewBox="0 0 16 16"><rect x="1" y="2" width="14" height="12" rx="1"/><circle cx="10" cy="8" r="2"/></svg>
-        </div>
-        <h4>Windows v1.1.0</h4>
-        <p>Latest — recommended<br>Windows 10 / 11</p>
-      </a>
-      <a href="https://github.com/dodo1653/dzzspace/releases/download/v1.0.1/dzzspace.Setup.1.0.0.exe" class="install-card" style="text-decoration:none">
-        <div class="icon-wrap">
-          <svg viewBox="0 0 16 16"><rect x="1" y="2" width="14" height="12" rx="1"/><circle cx="10" cy="8" r="2"/></svg>
-        </div>
-        <h4>Windows v1.0.0</h4>
-        <p>Original release<br>Windows 10 / 11</p>
-      </a>
-    </div>
-
-
+  <div class="install-card-wrap anim-fade-up-scale" style="transition-delay: 0.1s">
+    <a href="https://github.com/dodo1653/dzzspace/releases/download/v1.1.0/dzzspace.Setup.1.1.0.exe" class="install-card">
+      <div class="icon-wrap">
+        <svg viewBox="0 0 16 16"><rect x="1" y="2" width="14" height="12" rx="1"/><path d="M8 1v4M6 3l2 2 2-2"/></svg>
+      </div>
+      <div class="version-badge">v1.1.0</div>
+      <h4>Windows</h4>
+      <p>Windows 10 / 11 · 75 MB</p>
+      <div class="card-footer">
+        <span>Download Installer</span>
+        <svg viewBox="0 0 16 16"><path d="M8 2v10M3 7l5 5 5-5"/></svg>
+      </div>
+    </a>
+  </div>
 </section>
 
-  <footer class="container">
-    <div class="footer-links">
-      <a href="#features">Features</a>
-      <a href="#install">Install</a>
-      <a href="https://github.com/dodo1653/dzzspace" target="_blank">GitHub</a>
-      <a href="https://github.com/dodo1653/dzzspace/releases" target="_blank">Releases</a>
-    </div>
-    <p>&copy; 2026 <a href="#">dzzspace</a>. Built with Electron + React + TypeScript.</p>
-  </footer>
+<footer class="container">
+  <div class="footer-brand">
+    <img src="official-logo.png" alt="">dzzspace
+  </div>
+  <div class="footer-links">
+    <a href="#features">Features</a>
+    <a href="#install">Install</a>
+    <a href="https://github.com/dodo1653/dzzspace" target="_blank">GitHub</a>
+    <a href="https://github.com/dodo1653/dzzspace/releases" target="_blank">Releases</a>
+  </div>
+  <p>&copy; 2026 <a href="#">dzzspace</a>. Built with Electron + React + TypeScript.</p>
+</footer>
 
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.anim-fade-up, .anim-fade-up-scale, .section-line').forEach((el) => {
+  observer.observe(el);
+});
+</script>
 </body>
 </html>
