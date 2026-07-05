@@ -7,6 +7,9 @@ on:
 permissions:
   contents: write
 
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
   build-windows:
     runs-on: windows-latest
@@ -14,18 +17,11 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
       - run: npm ci
+      - run: npx --yes electron-vite build
       - run: npx --yes electron-builder --win --config.win.target=nsis
-      - name: Upload .exe
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./dist_electron/dzzspace Setup 1.1.0.exe
-          asset_name: dzzspace-Setup-1.1.0.exe
-          asset_content_type: application/octet-stream
+      - run: gh release upload ${{ github.ref_name }} "./dist_electron/dzzspace Setup 1.1.0.exe#dzzspace-Setup-1.1.0.exe" "./dist_electron/dzzspace Setup 1.1.0.exe.blockmap" "./dist_electron/latest.yml"
 
   build-macos:
     runs-on: macos-latest
@@ -33,18 +29,11 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
       - run: npm ci
+      - run: npx electron-vite build
       - run: npx electron-builder --mac --config.mac.target=zip
-      - name: Upload .zip
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./dist_electron/dzzspace-1.1.0-mac.zip
-          asset_name: dzzspace-darwin-x64.zip
-          asset_content_type: application/zip
+      - run: gh release upload ${{ github.ref_name }} "./dist_electron/dzzspace-1.1.0-mac.zip#dzzspace-darwin-x64.zip" "./dist_electron/latest-mac.yml"
 
   build-linux:
     runs-on: ubuntu-latest
@@ -52,15 +41,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
       - run: npm ci
+      - run: npx electron-vite build
       - run: npx electron-builder --linux --config.linux.target=AppImage
-      - name: Upload .AppImage
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./dist_electron/dzzspace-1.1.0.AppImage
-          asset_name: dzzspace-linux-x64.AppImage
-          asset_content_type: application/octet-stream
+      - run: gh release upload ${{ github.ref_name }} "./dist_electron/dzzspace-1.1.0.AppImage#dzzspace-linux-x64.AppImage" "./dist_electron/latest-linux.yml"
