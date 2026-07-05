@@ -3,8 +3,14 @@ out/
 dist/
 dist_electron/
 .vite/
+buildResources/icon.png
 *.log
 .DS_Store
 Thumbs.db
-website/downloads/*.exe
+website/downloads/
+website/website image.png
 Shortcut logo.png
+forge.config.js
+postcss.config.js
+tailwind.config.js
+scripts/
