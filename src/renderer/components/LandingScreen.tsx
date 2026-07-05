@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import logoImage from '../assets/logo.png'
 import { useWorkspaceStore } from '../store/workspaceStore'
 import { IconTrash } from './icons'
 import { playLandingClick, playLandingCreate, playLandingSwitch, playLandingDelete, playLandingHover } from '../utils/sound'
@@ -73,6 +74,40 @@ const LandingScreen: React.FC = () => {
         position: 'relative'
       }}>
         <div style={{ textAlign: 'center' }}>
+          <div style={{
+            position: 'relative',
+            width: 120,
+            height: 120,
+            margin: '0 auto 28px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <div style={{
+              position: 'absolute', inset: -8,
+              background: 'radial-gradient(ellipse at 50% 50%, rgba(212,163,115,0.06) 0%, transparent 70%)',
+              borderRadius: '50%',
+              pointerEvents: 'none'
+            }} />
+            <div style={{
+              position: 'absolute', inset: 0,
+              borderRadius: 24,
+              boxShadow: '0 12px 48px rgba(0,0,0,0.4), 0 0 0 1px rgba(212,163,115,0.06), inset 0 0 24px rgba(0,0,0,0.2)',
+              pointerEvents: 'none'
+            }} />
+            <img
+              src={logoImage}
+              alt="dzzspace"
+              style={{
+                width: '100%', height: '100%',
+                borderRadius: 20,
+                objectFit: 'contain',
+                display: 'block',
+                position: 'relative',
+                zIndex: 1
+              }}
+            />
+          </div>
           <h1 className="hero-title" style={{
             fontFamily: 'var(--font-sans)',
             fontSize: 60, fontWeight: 160,
