@@ -34,22 +34,23 @@
     }
 
     /* ---- AMBIENT BACKGROUND ORBS ---- */
-    @keyframes orbFloat1 {
-      0%, 100% { transform: translate(0%, 0%) scale(1); opacity: 0.4; }
-      25% { transform: translate(8%, 6%) scale(1.05); opacity: 0.5; }
-      50% { transform: translate(3%, -4%) scale(0.95); opacity: 0.35; }
-      75% { transform: translate(-5%, 8%) scale(1.02); opacity: 0.45; }
+    @keyframes orbDrift1 {
+      0% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(80px, -60px) scale(1.08); }
+      50% { transform: translate(40px, 80px) scale(0.92); }
+      75% { transform: translate(-60px, -30px) scale(1.04); }
+      100% { transform: translate(0, 0) scale(1); }
     }
-    @keyframes orbFloat2 {
-      0%, 100% { transform: translate(0%, 0%) scale(1); opacity: 0.3; }
-      25% { transform: translate(-6%, 5%) scale(1.03); opacity: 0.4; }
-      50% { transform: translate(4%, -3%) scale(0.97); opacity: 0.25; }
-      75% { transform: translate(7%, 7%) scale(1.01); opacity: 0.35; }
+    @keyframes orbDrift2 {
+      0% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(-70px, 50px) scale(1.06); }
+      66% { transform: translate(50px, -70px) scale(0.94); }
+      100% { transform: translate(0, 0) scale(1); }
     }
-    @keyframes orbFloat3 {
-      0%, 100% { transform: translate(0%, 0%) scale(1); opacity: 0.2; }
-      33% { transform: translate(5%, -5%) scale(1.04); opacity: 0.3; }
-      66% { transform: translate(-4%, 4%) scale(0.96); opacity: 0.15; }
+    @keyframes orbDrift3 {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(30px, -40px) scale(1.1); }
+      100% { transform: translate(0, 0) scale(1); }
     }
     .ambient-orbs {
       position: fixed;
@@ -61,27 +62,27 @@
     .ambient-orb {
       position: absolute;
       border-radius: 50%;
-      filter: blur(80px);
-      will-change: transform, opacity;
+      filter: blur(60px);
+      will-change: transform;
     }
     .ambient-orb--1 {
-      width: 600px; height: 600px;
-      top: -150px; left: -100px;
-      background: radial-gradient(circle, rgba(212,163,115,0.08) 0%, transparent 70%);
-      animation: orbFloat1 20s ease-in-out infinite;
+      width: 700px; height: 700px;
+      top: -200px; left: -200px;
+      background: radial-gradient(circle, #d4a373 0%, rgba(212,163,115,0.15) 30%, transparent 65%);
+      animation: orbDrift1 22s ease-in-out infinite;
     }
     .ambient-orb--2 {
-      width: 500px; height: 500px;
-      bottom: -100px; right: -80px;
-      background: radial-gradient(circle, rgba(212,163,115,0.05) 0%, transparent 70%);
-      animation: orbFloat2 25s ease-in-out infinite;
+      width: 550px; height: 550px;
+      bottom: -150px; right: -150px;
+      background: radial-gradient(circle, #c8955a 0%, rgba(200,149,90,0.12) 30%, transparent 65%);
+      animation: orbDrift2 26s ease-in-out infinite;
     }
     .ambient-orb--3 {
-      width: 400px; height: 400px;
+      width: 350px; height: 350px;
       top: 50%; left: 50%;
-      margin: -200px 0 0 -200px;
-      background: radial-gradient(circle, rgba(255,255,255,0.015) 0%, transparent 70%);
-      animation: orbFloat3 18s ease-in-out infinite;
+      margin: -175px 0 0 -175px;
+      background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 30%, transparent 60%);
+      animation: orbDrift3 18s ease-in-out infinite;
     }
 
     /* ---- PAGE CONTENT WRAPPER ---- */
@@ -758,13 +759,13 @@
 <body>
 <div class="scanlines"></div>
 
+<div class="page-content">
+
 <div class="ambient-orbs">
   <div class="ambient-orb ambient-orb--1"></div>
   <div class="ambient-orb ambient-orb--2"></div>
   <div class="ambient-orb ambient-orb--3"></div>
 </div>
-
-<div class="page-content">
 
 <nav>
   <div class="container">
