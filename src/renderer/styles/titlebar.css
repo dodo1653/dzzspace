@@ -84,11 +84,16 @@
 .title-bar-app-name {
   font-family: 'Press Start 2P', monospace;
   font-size: 10px;
-  color: #d4a373;
   letter-spacing: 1.5px;
   text-transform: lowercase;
   position: relative;
   top: 0.5px;
+  background: linear-gradient(135deg, #f0e6d0 0%, #d4a373 45%, #c8955a 70%, #b88a5a 100%);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 4s ease-in-out infinite;
 }
 
 .title-bar-traffic-lights {
