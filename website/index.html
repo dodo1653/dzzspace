@@ -33,6 +33,63 @@
       pointer-events: none; z-index: 9999;
     }
 
+    /* ---- AMBIENT BACKGROUND ORBS ---- */
+    @keyframes orbFloat1 {
+      0%, 100% { transform: translate(0%, 0%) scale(1); opacity: 0.4; }
+      25% { transform: translate(8%, 6%) scale(1.05); opacity: 0.5; }
+      50% { transform: translate(3%, -4%) scale(0.95); opacity: 0.35; }
+      75% { transform: translate(-5%, 8%) scale(1.02); opacity: 0.45; }
+    }
+    @keyframes orbFloat2 {
+      0%, 100% { transform: translate(0%, 0%) scale(1); opacity: 0.3; }
+      25% { transform: translate(-6%, 5%) scale(1.03); opacity: 0.4; }
+      50% { transform: translate(4%, -3%) scale(0.97); opacity: 0.25; }
+      75% { transform: translate(7%, 7%) scale(1.01); opacity: 0.35; }
+    }
+    @keyframes orbFloat3 {
+      0%, 100% { transform: translate(0%, 0%) scale(1); opacity: 0.2; }
+      33% { transform: translate(5%, -5%) scale(1.04); opacity: 0.3; }
+      66% { transform: translate(-4%, 4%) scale(0.96); opacity: 0.15; }
+    }
+    .ambient-orbs {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .ambient-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      will-change: transform, opacity;
+    }
+    .ambient-orb--1 {
+      width: 600px; height: 600px;
+      top: -150px; left: -100px;
+      background: radial-gradient(circle, rgba(212,163,115,0.08) 0%, transparent 70%);
+      animation: orbFloat1 20s ease-in-out infinite;
+    }
+    .ambient-orb--2 {
+      width: 500px; height: 500px;
+      bottom: -100px; right: -80px;
+      background: radial-gradient(circle, rgba(212,163,115,0.05) 0%, transparent 70%);
+      animation: orbFloat2 25s ease-in-out infinite;
+    }
+    .ambient-orb--3 {
+      width: 400px; height: 400px;
+      top: 50%; left: 50%;
+      margin: -200px 0 0 -200px;
+      background: radial-gradient(circle, rgba(255,255,255,0.015) 0%, transparent 70%);
+      animation: orbFloat3 18s ease-in-out infinite;
+    }
+
+    /* ---- PAGE CONTENT WRAPPER ---- */
+    .page-content {
+      position: relative;
+      z-index: 1;
+    }
+
     .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 
     /* ---- ANIMATIONS ---- */
@@ -701,6 +758,14 @@
 <body>
 <div class="scanlines"></div>
 
+<div class="ambient-orbs">
+  <div class="ambient-orb ambient-orb--1"></div>
+  <div class="ambient-orb ambient-orb--2"></div>
+  <div class="ambient-orb ambient-orb--3"></div>
+</div>
+
+<div class="page-content">
+
 <nav>
   <div class="container">
     <a href="#" class="nav-logo">
@@ -843,6 +908,8 @@
   </div>
   <p>&copy; 2026 <a href="#">dzzspace</a>. Built with Electron + React + TypeScript.</p>
 </footer>
+
+</div>
 
 <script>
 const observer = new IntersectionObserver((entries) => {
