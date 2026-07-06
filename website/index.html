@@ -936,6 +936,16 @@ const observer = new IntersectionObserver((entries) => {
 document.querySelectorAll('.reveal-card, .anim-fade-up, .section-line').forEach((el) => {
   observer.observe(el);
 });
+
+document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+  anchor.addEventListener('click', (e) => {
+    const href = anchor.getAttribute('href');
+    if (href === '#') return;
+    e.preventDefault();
+    const target = document.querySelector(href);
+    if (target) lenis.scrollTo(target, { offset: -60, duration: 1.2 });
+  });
+});
 </script>
 </body>
 </html>
